@@ -248,7 +248,7 @@ export default function PerfilPage() {
                   <div key={i} className="bg-cl-bg border border-cl-gray-light rounded-xl p-4">
                     <div className="flex items-center gap-3 mb-2">
                       <div className="w-9 h-9 rounded-xl bg-cl-gray-light flex items-center justify-center text-base font-bold text-cl-gray flex-shrink-0">
-                        {r.avatar || r.name[0]}
+                        {r.name?.[0] ?? '?'}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-bold text-sm text-cl-dark">{r.name}</p>
