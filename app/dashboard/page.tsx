@@ -115,11 +115,13 @@ export default function DashboardPage() {
     )
   }
 
-  const estadoInfo = {
-    aprobado: { label: 'Perfil aprobado y visible', color: 'text-emerald-600', bg: 'bg-emerald-50 border-emerald-200', icon: CheckCircle },
-    pendiente: { label: 'Pendiente de revisión por el administrador', color: 'text-amber-600', bg: 'bg-amber-50 border-amber-200', icon: Clock },
-    rechazado: { label: 'Perfil rechazado — contactá al administrador', color: 'text-red-600', bg: 'bg-red-50 border-red-200', icon: X },
-  }[proveedor.estado]
+  const estadoMap = {
+    aprobado:   { label: 'Perfil aprobado y visible',                        color: 'text-emerald-600', bg: 'bg-emerald-50 border-emerald-200', icon: CheckCircle },
+    pendiente:  { label: 'Pendiente de revisión por el administrador',        color: 'text-amber-600',  bg: 'bg-amber-50 border-amber-200',   icon: Clock },
+    rechazado:  { label: 'Perfil rechazado — contactá al administrador',      color: 'text-red-600',    bg: 'bg-red-50 border-red-200',       icon: X },
+    suspendido: { label: 'Perfil suspendido — contactá al administrador',     color: 'text-red-600',    bg: 'bg-red-50 border-red-200',       icon: X },
+  } as const
+  const estadoInfo = estadoMap[proveedor.estado as keyof typeof estadoMap] ?? estadoMap.pendiente
 
   return (
     <div className="min-h-screen flex flex-col bg-cl-bg">
