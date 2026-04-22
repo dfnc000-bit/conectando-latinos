@@ -1,202 +1,231 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
-import { MapPin, X, Star, MessageCircle, ExternalLink } from 'lucide-react'
+import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
+import { Star, MessageCircle, X, MapPin, ExternalLink } from 'lucide-react'
 import type { Proveedor } from '@/lib/types'
 
-// Coordenadas de Melbourne CBD como centro por defecto
-const MELBOURNE_CENTER: [number, number] = [-37.8136, 144.9631]
+const CAT_COLORES: Record<string, { bg: string; text: string; hex: string }> = {
+  'Peluquería':  { bg: 'bg-pink-500',   text: 'text-pink-500',   hex: '#ec4899' },
+  'Barbería':    { bg: 'bg-blue-500',    text: 'text-blue-500',   hex: '#3b82f6' },
+  'Uñas':        { bg: 'bg-purple-500',  text: 'text-purple-500', hex: '#a855f7' },
+  'Masajes':     { bg: 'bg-green-500',   text: 'text-green-500',  hex: '#22c55e' },
+  'Maquillaje':  { bg: 'bg-orange-500',  text: 'text-orange-500', hex: '#f97316' },
+  'Faciales':    { bg: 'bg-teal-500',    text: 'text-teal-500',   hex: '#14b8a6' },
+  'Depilación':  { bg: 'bg-red-500',     text: 'text-red-500',    hex: '#ef4444' },
+  'Pestañas':    { bg: 'bg-indigo-500',  text: 'text-indigo-500', hex: '#6366f1' },
+}
+
+function getCat(cat: string) {
+  return CAT_COLORES[cat] ?? { bg: 'bg-cl-verde', text: 'text-cl-verde', hex: '#5cbe8a' }
+}
+
+// Bounds del mapa de Melbourne que vamos a mostrar
+const MAP_BOUNDS = {
+  latMin: -38.18,
+  latMax: -37.55,
+  lngMin: 144.55,
+  lngMax: 145.40,
+}
+
+function latLngToPercent(lat: number, lng: number) {
+  const x = ((lng - MAP_BOUNDS.lngMin) / (MAP_BOUNDS.lngMax - MAP_BOUNDS.lngMin)) * 100
+  const y = ((MAP_BOUNDS.latMax - lat) / (MAP_BOUNDS.latMax - MAP_BOUNDS.latMin)) * 100
+  return { x, y }
+}
 
 interface Props {
   proveedores: Proveedor[]
 }
 
-export function MapaProveedores({ proveedores }: Props) {
-  const mapRef = useRef<any>(null)
-  const mapContainerRef = useRef<HTMLDivElement>(null)
+export default function MapaProveedores({ proveedores }: Props) {
   const [seleccionado, setSeleccionado] = useState<Proveedor | null>(null)
-  const [mounted, setMounted] = useState(false)
+  const mapaRef = useRef<HTMLDivElement>(null)
 
+  const conCoordenadas = proveedores.filter((p) => p.lat && p.lng)
+  const categorias = Array.from(new Set(conCoordenadas.map((p) => p.cat).filter(Boolean)))
+
+  // Cerrar tarjeta al hacer click fuera
   useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  useEffect(() => {
-    if (!mounted || !mapContainerRef.current || mapRef.current) return
-
-    // Importar Leaflet de forma dinamica para evitar SSR errors
-    import('leaflet').then((L) => {
-      // Corregir los iconos de Leaflet
-      delete (L.Icon.Default.prototype as any)._getIconUrl
-      L.Icon.Default.mergeOptions({
-        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-        iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-      })
-
-      const map = L.map(mapContainerRef.current!, {
-        center: MELBOURNE_CENTER,
-        zoom: 11,
-        zoomControl: true,
-      })
-
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-        maxZoom: 19,
-      }).addTo(map)
-
-      // Agregar pines por cada proveedor con coordenadas
-      proveedores.forEach((p) => {
-        if (!p.lat || !p.lng) return
-
-        // Pin personalizado estilo pill
-        const pinHtml = `
-          <div style="
-            background: #141814;
-            color: #9EE870;
-            font-family: 'Syne', sans-serif;
-            font-weight: 800;
-            font-size: 11px;
-            padding: 5px 10px;
-            border-radius: 999px;
-            white-space: nowrap;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
-            border: 2px solid #9EE870;
-            cursor: pointer;
-            transition: all 0.15s;
-          ">
-            ${p.cat}
-          </div>
-        `
-
-        const icon = L.divIcon({
-          html: pinHtml,
-          className: '',
-          iconAnchor: [0, 0],
-        })
-
-        const marker = L.marker([p.lat, p.lng], { icon })
-          .addTo(map)
-          .on('click', () => {
-            setSeleccionado(p)
-            map.setView([p.lat! - 0.005, p.lng!], 14, { animate: true })
-          })
-      })
-
-      mapRef.current = map
-    })
-
-    return () => {
-      if (mapRef.current) {
-        mapRef.current.remove()
-        mapRef.current = null
+    function handler(e: MouseEvent) {
+      const target = e.target as HTMLElement
+      if (!target.closest('[data-pin]') && !target.closest('[data-card]')) {
+        setSeleccionado(null)
       }
     }
-  }, [mounted, proveedores])
-
-  if (!mounted) return (
-    <div className="w-full h-full bg-cl-bg flex items-center justify-center">
-      <div className="text-cl-gray text-sm font-semibold">Cargando mapa...</div>
-    </div>
-  )
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
 
   return (
-    <div className="relative w-full h-full">
-      {/* Leaflet CSS */}
-      <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    <div className="relative w-full h-full min-h-[520px] bg-[#e8f0e9] overflow-hidden rounded-none">
+
+      {/* Mapa base via iframe sin marcadores */}
+      <iframe
+        src={`https://www.openstreetmap.org/export/embed.html?bbox=${MAP_BOUNDS.lngMin},${MAP_BOUNDS.latMin},${MAP_BOUNDS.lngMax},${MAP_BOUNDS.latMax}&layer=mapnik`}
+        className="absolute inset-0 w-full h-full border-0 pointer-events-auto"
+        title="Mapa Melbourne"
+        loading="lazy"
       />
 
-      {/* Mapa */}
-      <div ref={mapContainerRef} className="w-full h-full" />
+      {/* Capa SVG para pines — encima del iframe */}
+      <div
+        ref={mapaRef}
+        className="absolute inset-0 pointer-events-none"
+        style={{ zIndex: 10 }}
+      >
+        {conCoordenadas.map((p) => {
+          const { x, y } = latLngToPercent(p.lat!, p.lng!)
+          const color = getCat(p.cat)
+          const esSeleccionado = seleccionado?.id === p.id
 
-      {/* Tarjeta flotante del proveedor seleccionado — estilo Airbnb */}
-      {seleccionado && (
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-[1000] w-[calc(100%-2rem)] max-w-sm">
-          <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border border-cl-gray-light">
-            {/* Header con foto o gradiente */}
-            <div
-              className="h-28 w-full flex items-end p-3 relative"
-              style={{ background: 'linear-gradient(135deg,#141814,#1a8a6e)' }}
+          return (
+            <button
+              key={p.id}
+              data-pin
+              onClick={(e) => {
+                e.stopPropagation()
+                setSeleccionado(esSeleccionado ? null : p)
+              }}
+              className="absolute pointer-events-auto transform -translate-x-1/2 -translate-y-full transition-transform hover:scale-110 focus:outline-none"
+              style={{ left: `${x}%`, top: `${y}%`, zIndex: esSeleccionado ? 30 : 20 }}
+              title={p.nombre}
             >
-              <button
-                onClick={() => setSeleccionado(null)}
-                className="absolute top-3 right-3 bg-white/20 hover:bg-white/40 text-white rounded-full w-7 h-7 flex items-center justify-center transition-colors"
+              {/* Pin estilo Airbnb */}
+              <div
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full shadow-lg border-2 transition-all whitespace-nowrap
+                  ${esSeleccionado
+                    ? 'bg-cl-dark text-cl-verde2 border-cl-dark scale-110'
+                    : 'bg-white text-cl-dark border-white hover:border-cl-dark'
+                  }`}
+                style={{ fontSize: '0.7rem', fontWeight: 800 }}
               >
-                <X size={14} />
-              </button>
-              {seleccionado.fotoPerfil ? (
-                <img
-                  src={seleccionado.fotoPerfil}
-                  alt={`Foto de ${seleccionado.nombre}`}
-                  className="w-14 h-14 rounded-xl object-cover border-2 border-white/30"
+                <span
+                  className="w-2 h-2 rounded-full flex-shrink-0"
+                  style={{ backgroundColor: color.hex }}
                 />
-              ) : (
-                <div className="w-14 h-14 rounded-xl bg-white/10 flex items-center justify-center border-2 border-white/20">
-                  <span className="text-white/60 text-2xl font-bold">{seleccionado.nombre.charAt(0)}</span>
-                </div>
-              )}
-              <div className="ml-3 mb-1">
-                <p className="text-white font-syne font-extrabold text-sm leading-tight">{seleccionado.nombre}</p>
-                <span className="bg-cl-verde/80 text-white text-[0.6rem] font-bold px-2 py-0.5 rounded-full">{seleccionado.cat}</span>
+                {p.nombre.split(' ')[0]}
+              </div>
+              {/* Sombra del pin */}
+              <div className="w-2 h-1 bg-black/20 rounded-full mx-auto mt-0.5 blur-sm" />
+            </button>
+          )
+        })}
+      </div>
+
+      {/* Tarjeta flotante estilo Airbnb al seleccionar un pin */}
+      {seleccionado && (
+        <div
+          data-card
+          className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[300px] bg-white rounded-2xl shadow-2xl border border-cl-gray-light overflow-hidden"
+          style={{ zIndex: 40 }}
+        >
+          <div className="p-4">
+            <button
+              onClick={() => setSeleccionado(null)}
+              className="absolute top-3 right-3 w-7 h-7 rounded-full bg-cl-bg hover:bg-cl-gray-light flex items-center justify-center transition-colors"
+            >
+              <X size={13} className="text-cl-gray" />
+            </button>
+
+            {/* Cabecera */}
+            <div className="flex items-start gap-3 pr-8">
+              <div
+                className={`w-12 h-12 rounded-xl flex-shrink-0 flex items-center justify-center text-white text-lg font-extrabold ${getCat(seleccionado.cat).bg}`}
+              >
+                {seleccionado.nombre?.charAt(0)}
+              </div>
+              <div>
+                <p className="font-extrabold text-cl-dark text-sm leading-tight">{seleccionado.nombre}</p>
+                <p className={`text-xs font-bold mt-0.5 ${getCat(seleccionado.cat).text}`}>{seleccionado.cat}</p>
+                {seleccionado.rating && (
+                  <div className="flex items-center gap-1 mt-1">
+                    <Star size={11} className="text-amber-400 fill-amber-400" />
+                    <span className="text-xs font-bold text-cl-dark">{seleccionado.rating}</span>
+                    {seleccionado.total_resenas && (
+                      <span className="text-xs text-cl-gray">({seleccionado.total_resenas} reseñas)</span>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* Info */}
-            <div className="p-4">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-1.5">
-                  <Star size={13} className="text-amber-400 fill-amber-400" />
-                  <span className="text-cl-dark font-bold text-sm">{seleccionado.rating?.toFixed(1)}</span>
-                  <span className="text-cl-gray text-xs">({seleccionado.totalResenas} resenas)</span>
-                </div>
-                <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${seleccionado.disponible ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-500'}`}>
-                  {seleccionado.disponible ? 'Disponible' : 'No disponible'}
-                </span>
+            {/* Direccion */}
+            {seleccionado.direccion && (
+              <div className="flex items-start gap-2 mt-3 bg-cl-bg rounded-xl p-2.5">
+                <MapPin size={12} className="text-cl-verde mt-0.5 flex-shrink-0" />
+                <p className="text-xs text-cl-gray leading-relaxed">{seleccionado.direccion}</p>
               </div>
+            )}
 
-              {seleccionado.direccion && (
-                <div className="flex items-start gap-1.5 mb-3">
-                  <MapPin size={13} className="text-cl-verde mt-0.5 flex-shrink-0" />
-                  <p className="text-cl-gray text-xs leading-tight">{seleccionado.direccion}</p>
-                </div>
-              )}
+            {/* Descripcion */}
+            {seleccionado.descripcion && (
+              <p className="text-xs text-cl-gray mt-2.5 leading-relaxed line-clamp-2">{seleccionado.descripcion}</p>
+            )}
 
-              <p className="text-cl-gray text-xs leading-relaxed mb-4 line-clamp-2">{seleccionado.descripcion}</p>
+            {/* Horario */}
+            {seleccionado.horario && (
+              <p className="text-[0.65rem] text-cl-verde font-semibold mt-1.5">{seleccionado.horario}</p>
+            )}
 
-              <div className="flex gap-2">
-                <Link
-                  href={`/proveedor/${seleccionado.id}`}
-                  className="flex-1 bg-cl-dark text-cl-verde2 text-xs font-bold rounded-xl py-2.5 flex items-center justify-center gap-1.5 hover:opacity-90 transition-opacity"
-                >
-                  <ExternalLink size={12} />
-                  Ver perfil completo
-                </Link>
-                {seleccionado.telefono && (
-                  <a
-                    href={`https://wa.me/${seleccionado.telefono}?text=Hola! Te vi en el mapa de Conectando Latinos y me interesa tu servicio de ${seleccionado.cat}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 bg-[#25d366] text-white text-xs font-bold rounded-xl py-2.5 flex items-center justify-center gap-1.5 hover:opacity-90 transition-opacity"
-                  >
-                    <MessageCircle size={12} />
-                    WhatsApp
-                  </a>
-                )}
-              </div>
+            {/* Botones */}
+            <div className="flex gap-2 mt-3">
+              <Link
+                href={`/proveedor/${seleccionado.id}`}
+                className="flex-1 bg-cl-dark text-cl-verde2 text-xs font-bold rounded-xl py-2.5 flex items-center justify-center gap-1.5 hover:opacity-90 transition-opacity"
+              >
+                <ExternalLink size={11} />
+                Ver perfil completo
+              </Link>
+              <a
+                href={`https://wa.me/${seleccionado.telefono}?text=Hola! Te vi en Conectando Latinos Melbourne y me interesa tu servicio de ${seleccionado.cat}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 bg-[#25d366] text-white text-xs font-bold rounded-xl px-3 py-2.5 hover:opacity-90 transition-opacity"
+              >
+                <MessageCircle size={12} />
+                WA
+              </a>
             </div>
           </div>
         </div>
       )}
 
-      {/* Contador de pines */}
-      <div className="absolute top-4 left-4 z-[1000] bg-white rounded-xl px-3 py-2 shadow-md border border-cl-gray-light">
-        <p className="text-cl-dark text-xs font-bold">
-          {proveedores.filter((p) => p.lat && p.lng).length} proveedores en el mapa
-        </p>
-      </div>
+      {/* Leyenda de categorias */}
+      {categorias.length > 0 && (
+        <div
+          className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg p-3 min-w-[130px]"
+          style={{ zIndex: 20 }}
+        >
+          <p className="text-[0.6rem] font-extrabold text-cl-gray uppercase tracking-widest mb-2">Categorias</p>
+          <div className="flex flex-col gap-1.5">
+            {categorias.map((cat) => {
+              const color = getCat(cat)
+              const cantidad = conCoordenadas.filter((p) => p.cat === cat).length
+              return (
+                <div key={cat} className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: color.hex }} />
+                  <span className="text-[0.65rem] text-cl-dark font-semibold truncate">{cat}</span>
+                  <span className="text-[0.6rem] text-cl-gray ml-auto">{cantidad}</span>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Mensaje sin coordenadas */}
+      {conCoordenadas.length === 0 && (
+        <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 20, pointerEvents: 'none' }}>
+          <div className="bg-white/95 rounded-2xl px-6 py-5 shadow-xl text-center max-w-xs mx-4">
+            <MapPin size={32} className="text-cl-gray/30 mx-auto mb-3" />
+            <p className="text-cl-dark font-bold text-sm">Sin ubicaciones exactas aun</p>
+            <p className="text-cl-gray text-xs mt-1 leading-relaxed">
+              Los emprendedores apareceran en el mapa cuando registren su direccion exacta.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
