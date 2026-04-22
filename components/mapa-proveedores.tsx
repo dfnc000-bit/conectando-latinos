@@ -20,7 +20,7 @@ function getCat(cat: string) {
   return CAT_COLORES[cat] ?? { bg: 'bg-cl-verde', text: 'text-cl-verde', hex: '#5cbe8a' }
 }
 
-// Bounds del mapa de Melbourne que vamos a mostrar
+// v2 — sin leaflet — Bounds del mapa de Melbourne que vamos a mostrar
 const MAP_BOUNDS = {
   latMin: -38.18,
   latMax: -37.55,
