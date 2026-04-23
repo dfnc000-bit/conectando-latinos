@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Upload, X, Plus, Trash2 } from 'lucide-react'
@@ -19,7 +19,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   )
 }
 
-export default function RegistroPage() {
+function RegistroContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [tab, setTab] = useState<'cliente' | 'proveedor'>(
@@ -248,5 +248,12 @@ export default function RegistroPage() {
       </div>
       <Footer />
     </div>
+  )
+}
+export default function RegistroPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><p className="text-cl-gray">Cargando...</p></div>}>
+      <RegistroContent />
+    </Suspense>
   )
 }
