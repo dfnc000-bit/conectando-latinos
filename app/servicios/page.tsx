@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Search, MapPin, SlidersHorizontal, X } from 'lucide-react'
 import { Navbar } from '@/components/navbar'
@@ -10,7 +10,7 @@ import { ChatWidget } from '@/components/chat-widget'
 import { CATEGORIAS, SUBURBIOS, type Proveedor } from '@/lib/types'
 import { getProveedoresAction } from '@/lib/actions'
 
-export default function ServiciosPage() {
+function ServiciosContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
 
@@ -209,5 +209,12 @@ export default function ServiciosPage() {
       <Footer />
       <ChatWidget />
     </div>
+  )
+}
+export default function ServiciosPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><p className="text-cl-gray">Cargando...</p></div>}>
+      <ServiciosContent />
+    </Suspense>
   )
 }
