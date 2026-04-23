@@ -21,7 +21,7 @@ export function Navbar({ onOpenRegister }: NavbarProps) {
   useEffect(() => {
     // Leer sesion de Supabase primero, si no del store local
     const supabase = createClient()
-    supabase.auth.getUser().then(({ data }) => {
+    supabase.auth.getUser().then(({ data }: { data: any }) => {
       if (data.user) {
         const local = getSesion()
         if (local) {
