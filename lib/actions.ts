@@ -120,7 +120,7 @@ export async function getResumenClicksAction(proveedorId: string) {
     return {
       total: data.length,
       esteMes: data.filter((c: any) => new Date(c.fecha) >= inicioMes).length,
-      semanaActual: data.filter((c) => new Date(c.fecha) >= inicioSemana).length,
+      semanaActual: data.filter((c: any) => new Date(c.fecha) >= inicioSemana).length,
     }
   } catch {
     return { total: 0, esteMes: 0, semanaActual: 0 }
