@@ -142,8 +142,8 @@ export default function MapaProveedores({ proveedores }: Props) {
                   <div className="flex items-center gap-1 mt-1">
                     <Star size={11} className="text-amber-400 fill-amber-400" />
                     <span className="text-xs font-bold text-cl-dark">{seleccionado.rating}</span>
-                    {seleccionado.total_resenas && (
-                      <span className="text-xs text-cl-gray">({seleccionado.total_resenas} reseñas)</span>
+                    {seleccionado.totalresenas && (
+                      <span className="text-xs text-cl-gray">({seleccionado.totalresenas} reseñas)</span>
                     )}
                   </div>
                 )}
