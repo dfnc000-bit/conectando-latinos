@@ -251,7 +251,7 @@ export default function PerfilPage() {
                         {r.autor?.[0] ?? '?'}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-bold text-sm text-cl-dark">{r.name}</p>
+                        <p className="font-bold text-sm text-cl-dark">{r.autor}</p>
                         {r.fecha && <p className="text-cl-gray text-xs">{r.fecha}</p>}
                       </div>
                       <div className="flex items-center gap-0.5 flex-shrink-0">
