@@ -26,7 +26,7 @@ export default function PerfilPage() {
       const mapped: Proveedor = {
         ...data,
         nombreNegocio: data.nombre,
-        totalResenas: data.total_resenas ?? 0,
+        totalResenas: data.totalresenas ?? 0,
         fotoPerfil: data.avatar_url ?? '',
         servicios: (data.servicios ?? []).map((s: any) => ({ name: s.nombre, price: s.precio })),
         resenas: (data.resenas ?? []).map((r: any) => ({
