@@ -374,7 +374,7 @@ export async function agregarResenaAction(data: {
     .eq('proveedor_id', data.proveedorId)
 
   if (resenas && resenas.length > 0) {
-    const avg = resenas.reduce((a, r) => a + r.rating, 0) / resenas.length
+    const avg = resenas.reduce((a: any, r: any) => a + r.rating, 0) / resenas.length
     await supabase.from('proveedores').update({
       rating: Math.round(avg * 10) / 10,
       total_resenas: resenas.length,
