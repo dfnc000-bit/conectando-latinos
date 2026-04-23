@@ -248,7 +248,7 @@ export default function PerfilPage() {
                   <div key={i} className="bg-cl-bg border border-cl-gray-light rounded-xl p-4">
                     <div className="flex items-center gap-3 mb-2">
                       <div className="w-9 h-9 rounded-xl bg-cl-gray-light flex items-center justify-center text-base font-bold text-cl-gray flex-shrink-0">
-                        {r.name?.[0] ?? '?'}
+                        {r.autor?.[0] ?? '?'}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-bold text-sm text-cl-dark">{r.name}</p>
@@ -259,12 +259,12 @@ export default function PerfilPage() {
                           <Star
                             key={j}
                             size={11}
-                            className={j < r.stars ? 'fill-amber-400 text-amber-400' : 'fill-cl-gray-light text-cl-gray-light'}
+                            className={j < r.rating ? 'fill-amber-400 text-amber-400' : 'fill-cl-gray-light text-cl-gray-light'}
                           />
                         ))}
                       </div>
                     </div>
-                    <p className="text-cl-gray text-xs leading-relaxed">{r.text}</p>
+                    <p className="text-cl-gray text-xs leading-relaxed">{r.comentario}</p>
                   </div>
                 ))}
               </div>
