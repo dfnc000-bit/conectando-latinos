@@ -2,16 +2,8 @@ import type { Metadata } from 'next'
 import { Syne, Plus_Jakarta_Sans } from 'next/font/google'
 import './globals.css'
 
-const syne = Syne({ 
-  subsets: ['latin'], 
-  variable: '--font-syne', 
-  weight: ['600','700','800'] 
-})
-const plusJakarta = Plus_Jakarta_Sans({ 
-  subsets: ['latin'], 
-  variable: '--font-jakarta', 
-  weight: ['300','400','500','600','700'] 
-})
+const syne = Syne({ subsets: ['latin'], variable: '--font-syne', weight: ['600','700','800'] })
+const plusJakarta = Plus_Jakarta_Sans({ subsets: ['latin'], variable: '--font-jakarta', weight: ['300','400','500','600','700'] })
 
 export const metadata: Metadata = {
   title: 'Conectando Latinos — Melbourne, Australia',
@@ -24,8 +16,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es" className={`${syne.variable} ${plusJakarta.variable}`}>
-      <body className="font-jakarta antialiased bg-cl-dark text-white">
+    <html lang="es" className={`${syne.variable} ${plusJakarta.variable} bg-[#0f1410]`}>
+      <body className="font-jakarta antialiased bg-[#0f1410] text-[#e8ebe6]">
         {children}
       </body>
     </html>
