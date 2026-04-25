@@ -2,56 +2,59 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  html, body {
-    background-color: #f4f5f0;
-    color: #141814;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-  }
+html, body {
+  background-color: #141814;
+  color: #f0f0f0;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-@layer utilities {
-  .text-cl-verde { color: #1a8a6e; }
-  .text-cl-verde2 { color: #22b08c; }
-  .text-cl-dorado { color: #c8882a; }
-  .text-cl-dark { color: #141814; }
-  .text-cl-gray { color: #5a6057; }
-  .text-cl-gray-light { color: #dde0d8; }
+* {
+  box-sizing: border-box;
+}
 
-  .bg-cl-bg { background-color: #f4f5f0; }
-  .bg-cl-bg2 { background-color: #eceee8; }
-  .bg-cl-dark { background-color: #141814; }
-  .bg-cl-verde { background-color: #1a8a6e; }
-  .bg-cl-verde2 { background-color: #22b08c; }
-  .bg-cl-gray-light { background-color: #dde0d8; }
+.text-cl-verde { color: #1a8a6e !important; }
+.text-cl-verde2 { color: #22b08c !important; }
+.text-cl-dorado { color: #c8882a !important; }
+.text-cl-dark { color: #141814 !important; }
+.text-cl-gray { color: #5a6057 !important; }
+.text-cl-gray-light { color: #dde0d8 !important; }
+.text-white { color: #ffffff !important; }
 
-  .border-cl-verde { border-color: #1a8a6e; }
-  .border-cl-verde2 { border-color: #22b08c; }
-  .border-cl-dark { border-color: #141814; }
-  .border-cl-gray-light { border-color: #dde0d8; }
+.bg-cl-bg { background-color: #f4f5f0 !important; }
+.bg-cl-bg2 { background-color: #eceee8 !important; }
+.bg-cl-dark { background-color: #141814 !important; }
+.bg-cl-verde { background-color: #1a8a6e !important; }
+.bg-cl-verde2 { background-color: #22b08c !important; }
+.bg-cl-gray-light { background-color: #dde0d8 !important; }
+.bg-white { background-color: #ffffff !important; }
 
-  .hover\:bg-cl-verde2:hover { background-color: #22b08c; }
-  .hover\:text-cl-verde:hover { color: #1a8a6e; }
-  .hover\:text-cl-verde2:hover { color: #22b08c; }
-  .hover\:border-cl-verde:hover { border-color: #1a8a6e; }
-  .hover\:border-cl-dark:hover { border-color: #141814; }
+.border-cl-verde { border-color: #1a8a6e !important; }
+.border-cl-verde2 { border-color: #22b08c !important; }
+.border-cl-dark { border-color: #141814 !important; }
+.border-cl-gray-light { border-color: #dde0d8 !important; }
 
-  .font-syne { font-family: 'Syne', sans-serif; }
-  .font-jakarta { font-family: 'Plus Jakarta Sans', sans-serif; }
+.hover\:bg-cl-verde2:hover { background-color: #22b08c !important; }
+.hover\:bg-cl-dark\/80:hover { background-color: rgba(20,24,20,0.8) !important; }
+.hover\:text-cl-verde:hover { color: #1a8a6e !important; }
+.hover\:text-cl-verde2:hover { color: #22b08c !important; }
+.hover\:border-cl-verde:hover { border-color: #1a8a6e !important; }
+.hover\:border-cl-dark:hover { border-color: #141814 !important; }
 
-  .form-input {
-    width: 100%;
-    background-color: #f4f5f0;
-    border: 1.5px solid #dde0d8;
-    border-radius: 10px;
-    padding: 10px 14px;
-    color: #141814;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 0.88rem;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  .form-input:focus {
-    border-color: #1a8a6e;
-  }
+.font-syne { font-family: 'Syne', sans-serif !important; }
+.font-jakarta { font-family: 'Plus Jakarta Sans', sans-serif !important; }
+
+.form-input {
+  width: 100%;
+  background-color: #f4f5f0;
+  border: 1.5px solid #dde0d8;
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: #141814;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.88rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.form-input:focus {
+  border-color: #1a8a6e;
 }
