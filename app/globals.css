@@ -2,14 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body {
-  background-color: #141814;
-  color: #ffffff;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-}
-
-* {
-  box-sizing: border-box;
+:root {
+  --radius: 0.5rem;
 }
 
 .form-input {
@@ -19,7 +13,7 @@ html, body {
   border-radius: 10px;
   padding: 10px 14px;
   color: #141814;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font-jakarta), sans-serif;
   font-size: 0.88rem;
   outline: none;
   transition: border-color 0.2s;
