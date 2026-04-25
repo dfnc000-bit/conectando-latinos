@@ -13,6 +13,8 @@ module.exports = {
         'cl-verde2':     '#22b08c',
         'cl-dorado':     '#c8882a',
         'cl-dorado2':    '#e8a84a',
+        'cl-gold':       '#c8882a',
+        'cl-gold2':      '#e8a84a',
         'cl-dark':       '#141814',
         'cl-gray':       '#5a6057',
         'cl-gray-light': '#dde0d8',
