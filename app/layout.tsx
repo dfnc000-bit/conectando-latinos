@@ -16,8 +16,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es" className={`${syne.variable} ${plusJakarta.variable} bg-cl-bg`}>
-      <body className="font-jakarta antialiased">
+   <html lang="es" className={`${syne.variable} ${plusJakarta.variable}`} style={{ backgroundColor: '#141814' }}>
+     <body className="font-jakarta antialiased" style={{ backgroundColor: '#141814', color: '#ffffff' }}>
         {children}
       </body>
     </html>
