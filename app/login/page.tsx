@@ -53,10 +53,6 @@ export default function LoginPage() {
       <Navbar />
       <div className="flex-1 flex items-center justify-center py-16 px-4">
         <div className="w-full max-w-md">
-          <div className="bg-cl-dark rounded-t-3xl px-7 py-7">
-            <h1 className="font-syne text-white font-extrabold text-2xl tracking-tight mb-1">Iniciar sesión</h1>
-            <p className="text-white/50 text-sm">Accedé a tu cuenta de Conectando Latinos</p>
-          </div>
           <div className="bg-white rounded-b-3xl border border-t-0 border-cl-gray-light px-7 py-6 shadow-sm">
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-600 text-xs font-semibold rounded-xl px-4 py-3 mb-4">
