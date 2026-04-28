@@ -51,13 +51,32 @@ function RegistroContent() {
   const fotoRef = useRef<HTMLInputElement>(null)
   const galeriaRef = useRef<HTMLInputElement>(null)
 
-  function fileToBase64(file: File): Promise<string> {
-    return new Promise((res) => {
-      const reader = new FileReader()
-      reader.onload = (e) => res(e.target?.result as string)
-      reader.readAsDataURL(file)
-    })
-  }
+ function fileToBase64(file: File): Promise<string> {
+  return new Promise((res) => {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const img = new Image()
+      img.onload = () => {
+        const canvas = document.createElement('canvas')
+        const MAX = 800
+        let w = img.width
+        let h = img.height
+        if (w > h) {
+          if (w > MAX) { h = Math.round(h * MAX / w); w = MAX }
+        } else {
+          if (h > MAX) { w = Math.round(w * MAX / h); h = MAX }
+        }
+        canvas.width = w
+        canvas.height = h
+        const ctx = canvas.getContext('2d')!
+        ctx.drawImage(img, 0, 0, w, h)
+        res(canvas.toDataURL('image/jpeg', 0.7))
+      }
+      img.src = e.target?.result as string
+    }
+    reader.readAsDataURL(file)
+  })
+}
 
   async function handleFotoPerfil(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
