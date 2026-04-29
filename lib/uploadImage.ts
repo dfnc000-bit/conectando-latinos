@@ -1,11 +1,14 @@
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createBrowserClient } from '@supabase/ssr'
 
 export async function uploadProviderImage(
   file: File,
   userId: string,
   slot: number = 0
 ): Promise<string> {
-  const supabase = createClientComponentClient()
+const supabase = createBrowserClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
 
   // Comprimir antes de subir
   const compressed = await compressImage(file, 1200, 0.8)
