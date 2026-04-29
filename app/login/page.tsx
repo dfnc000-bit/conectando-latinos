@@ -68,10 +68,7 @@ export default function LoginPage() {
                 <label className="block text-cl-gray text-[0.7rem] font-bold uppercase tracking-wider mb-1.5">Contraseña</label>
                 <input className="form-input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleLogin()} placeholder="Tu contraseña" />
               </div>
-              <div className="bg-cl-bg border border-cl-gray-light rounded-xl p-3 text-xs text-cl-gray">
-                <p className="font-bold text-cl-dark mb-1">Acceso de administrador:</p>
-                <p>admin@conectandolatinos.com / admin123</p>
-              </div>
+              
               <button onClick={handleLogin} disabled={loading} className="w-full bg-cl-verde hover:bg-cl-verde2 text-white font-bold text-sm rounded-xl py-3.5 transition-colors disabled:opacity-60">
                 {loading ? 'Entrando...' : 'Iniciar sesión'}
               </button>
