@@ -188,15 +188,7 @@ export default function MapaProveedores({ proveedores }: Props) {
                 Ver perfil completo
               </Link>
               
-                href={`https://wa.me/${seleccionado.telefono}?text=Hola! Te vi en Conectando Latinos Melbourne y me interesa tu servicio de ${seleccionado.cat}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-white text-xs font-bold rounded-xl px-3 py-2.5 hover:opacity-90 transition-opacity"
-style={{ backgroundColor: '#25d366' }}
-              >
-                <MessageCircle size={12} />
-                WA
-              </a>
+               <a href={`https://wa.me/${seleccionado.telefono}?text=Hola! Te vi en Conectando Latinos Melbourne y me interesa tu servicio de ${seleccionado.cat}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-white text-xs font-bold rounded-xl px-3 py-2.5 hover:opacity-90 transition-opacity" style={{ backgroundColor: '#25d366' }}><MessageCircle size={12} />WA</a>
             </div>
           </div>
         </div>
