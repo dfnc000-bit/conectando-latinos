@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Search, MapPin, ArrowRight, Plus } from 'lucide-react'
+import { Search, MapPin, Plus } from 'lucide-react'
 import { SUBURBIOS } from '@/lib/types'
 
 const STATS = [
@@ -26,7 +26,6 @@ export function Hero() {
 
   return (
     <section className="bg-cl-dark relative overflow-hidden pt-20 pb-0 px-6 text-center">
-      {/* Fondo con gradientes */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -44,24 +43,23 @@ export function Hero() {
           <span className="text-cl-verde2 text-xs font-bold tracking-widest uppercase">Para la comunidad latina</span>
         </div>
 
-        {/* Heading — CAMBIO: "vos" → "ti" */}
+        {/* Heading — 3 renglones: línea 1 normal / línea 2 verde / línea 3 con "ti" dorado */}
         <h1
           className="font-syne text-white font-extrabold leading-[1.06] tracking-tight mb-5 text-balance"
-          style={{ fontSize: 'clamp(2rem, 5.5vw, 3.75rem)' }}
+          style={{ fontSize: 'clamp(2.4rem, 6.5vw, 4.5rem)' }}
         >
-          Servicios de belleza<br />
-          y bienestar{' '}
+          Servicios de belleza y bienestar<br />
           <span className="text-cl-verde2">en español</span>
           <br />
           cerca de <span className="text-cl-gold2">ti</span>
         </h1>
 
-        {/* Subtítulo — CAMBIO: más corto y directo */}
+        {/* Subtítulo corto */}
         <p className="text-white/50 text-base leading-relaxed max-w-lg mx-auto mb-6">
           Profesionales latinos en Melbourne. Atención en tu idioma, contacto directo por WhatsApp.
         </p>
 
-        {/* Prueba social compacta — NUEVO: debajo del subtítulo, antes de los CTAs */}
+        {/* Prueba social — UNA sola vez aquí, NO se repite abajo */}
         <div className="flex items-center justify-center gap-4 flex-wrap mb-8">
           <div className="flex items-center gap-1.5">
             <span className="text-cl-gold2 text-sm tracking-tight">★★★★★</span>
@@ -80,7 +78,7 @@ export function Hero() {
           </div>
         </div>
 
-        {/* CTAs — sin cambios estructurales, mejorado texto */}
+        {/* CTAs */}
         <div className="flex gap-3 justify-center flex-wrap mb-8">
           <button
             onClick={handleSearch}
@@ -98,13 +96,13 @@ export function Hero() {
           >
             <Plus size={22} className="text-cl-gold2 flex-shrink-0" />
             <div>
-              <p className="font-bold text-sm">Publicá tu negocio gratis</p>
-              <p className="text-white/55 text-xs mt-0.5">¿Sos proveedor? Publicá gratis</p>
+              <p className="font-bold text-sm">¿Sos proveedor? Publicá gratis</p>
+              <p className="text-white/55 text-xs mt-0.5">Publicá tu negocio hoy</p>
             </div>
           </a>
         </div>
 
-        {/* Barra de búsqueda — sin cambios */}
+        {/* Barra de búsqueda */}
         <div className="flex bg-white/[0.07] border border-white/[0.14] rounded-xl overflow-hidden focus-within:border-cl-verde2 transition-colors max-w-2xl mx-auto">
           <div className="flex items-center pl-4 text-white/30">
             <Search size={16} />
@@ -140,7 +138,7 @@ export function Hero() {
         </div>
       </div>
 
-      {/* Stats — CAMBIO: movidos al fondo como barra separada, sin repetición */}
+      {/* Stats — barra inferior SIN "80+" ni "4.9" para no repetir la prueba social de arriba */}
       <div className="relative z-10 mt-12 border-t border-white/[0.08]">
         <div className="max-w-3xl mx-auto grid grid-cols-4 divide-x divide-white/[0.08]">
           {STATS.map((s) => (
