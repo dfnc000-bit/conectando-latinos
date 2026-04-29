@@ -1,5 +1,4 @@
 'use client'
-
 import Link from 'next/link'
 import { CATEGORIAS } from '@/lib/types'
 
@@ -15,24 +14,22 @@ export function Categories({ active, onChange, linkMode = false }: CategoriesPro
       <div className="max-w-4xl mx-auto text-center">
         <p className="text-cl-verde text-xs font-bold tracking-[2.5px] uppercase mb-2">Explorá por tipo</p>
         <h2
-          className="font-syne text-cl-dark font-extrabold tracking-tight mb-3 text-balance"
+          className="font-syne text-white font-extrabold tracking-tight mb-3 text-balance"
           style={{ fontSize: 'clamp(1.5rem, 3.5vw, 2rem)' }}
         >
           Categorías de servicios
         </h2>
-        <p className="text-cl-gray text-sm leading-relaxed max-w-md mx-auto mb-8">
+        <p className="text-white/55 text-sm leading-relaxed max-w-md mx-auto mb-8">
           Desde peluquería y barbería hasta masajes y microblading — todo en un solo lugar.
         </p>
-
         <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-12 gap-2.5">
           {CATEGORIAS.map((cat) => {
             const isActive = active === cat.value
             const baseClass = `col-span-1 flex flex-col items-center gap-1.5 rounded-2xl px-2 py-3.5 border transition-all duration-200 cursor-pointer ${
               isActive
-                ? 'bg-cl-dark border-cl-dark text-cl-verde2 shadow-lg -translate-y-1'
-                : 'bg-white border-cl-gray-light text-cl-gray hover:bg-cl-dark hover:border-cl-dark hover:text-cl-verde2 hover:-translate-y-1 hover:shadow-lg'
+                ? 'bg-cl-dark border-cl-verde2 text-cl-verde2 shadow-lg -translate-y-1'
+                : 'bg-white/[0.06] border-white/[0.12] text-white/70 hover:bg-cl-dark hover:border-cl-verde2 hover:text-cl-verde2 hover:-translate-y-1 hover:shadow-lg'
             }`
-
             if (linkMode) {
               const href = cat.value === 'todas' ? '/servicios' : `/servicios?cat=${encodeURIComponent(cat.value)}`
               return (
@@ -42,13 +39,10 @@ export function Categories({ active, onChange, linkMode = false }: CategoriesPro
                 </Link>
               )
             }
-
             return (
               <button
                 key={cat.value}
-                onClick={() => {
-                  onChange?.(cat.value)
-                }}
+                onClick={() => onChange?.(cat.value)}
                 className={baseClass}
               >
                 <span className="text-xl leading-none">{cat.icon}</span>
