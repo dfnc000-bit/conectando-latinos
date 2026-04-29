@@ -7,7 +7,7 @@ import { Upload, X, Plus, Trash2 } from 'lucide-react'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import { registrarClienteAction, registrarProveedorAction, updateProveedorAction } from '@/lib/actions'
-import { uploadProviderImage } from '@/lib/uploadImage'
+import { uploadProviderImage, geocodificarDireccion } from '@/lib/uploadImage'
 import { setSesion } from '@/lib/store'
 import { CATEGORIAS, SUBURBIOS, type Usuario } from '@/lib/types'
 
@@ -113,9 +113,18 @@ const [galeriaPreview, setGaleriaPreview] = useState<string[]>([])
         updates.galeria = galeriaUrls
       }
 
-      if (Object.keys(updates).length > 0 && result.proveedorId) {
-        await updateProveedorAction(result.proveedorId, updates)
-      }
+      // Geocodificar la dirección
+  if (pDireccion) {
+    const coords = await geocodificarDireccion(pDireccion)
+    if (coords) {
+      updates.lat = coords.lat
+      updates.lng = coords.lng
+    }
+  }
+
+  if (Object.keys(updates).length > 0 && result.proveedorId) {
+    await updateProveedorAction(result.proveedorId, updates)
+  }
     } catch (imgError) {
       console.error('Error subiendo imágenes:', imgError)
     }
