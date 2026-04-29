@@ -7,6 +7,7 @@ import { Upload, X, Plus, Trash2 } from 'lucide-react'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import { registrarClienteAction, registrarProveedorAction } from '@/lib/actions'
+import { uploadProviderImage } from '@/lib/uploadImage'
 import { setSesion } from '@/lib/store'
 import { CATEGORIAS, SUBURBIOS, type Usuario } from '@/lib/types'
 
@@ -45,50 +46,28 @@ function RegistroContent() {
   const [pIg, setPIg] = useState('')
   const [pHorario, setPHorario] = useState('')
   const [pDireccion, setPDireccion] = useState('')
-  const [fotoPerfil, setFotoPerfil] = useState('')
-  const [galeria, setGaleria] = useState<string[]>([])
+ const [fotoPerfil, setFotoPerfil] = useState<File | null>(null)
+const [fotoPerfilPreview, setFotoPerfilPreview] = useState('')
+const [galeria, setGaleria] = useState<File[]>([])
+const [galeriaPreview, setGaleriaPreview] = useState<string[]>([])
   const [servicios, setServicios] = useState([{ name: '', price: '' }])
   const fotoRef = useRef<HTMLInputElement>(null)
   const galeriaRef = useRef<HTMLInputElement>(null)
 
- function fileToBase64(file: File): Promise<string> {
-  return new Promise((res) => {
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      const img = new Image()
-      img.onload = () => {
-        const canvas = document.createElement('canvas')
-        const MAX = 800
-        let w = img.width
-        let h = img.height
-        if (w > h) {
-          if (w > MAX) { h = Math.round(h * MAX / w); w = MAX }
-        } else {
-          if (h > MAX) { w = Math.round(w * MAX / h); h = MAX }
-        }
-        canvas.width = w
-        canvas.height = h
-        const ctx = canvas.getContext('2d')!
-        ctx.drawImage(img, 0, 0, w, h)
-        res(canvas.toDataURL('image/jpeg', 0.7))
-      }
-      img.src = e.target?.result as string
-    }
-    reader.readAsDataURL(file)
-  })
-}
-
-  async function handleFotoPerfil(e: React.ChangeEvent<HTMLInputElement>) {
+ function handleFotoPerfil(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
-    if (file) setFotoPerfil(await fileToBase64(file))
+    if (file) {
+      setFotoPerfil(file)
+      setFotoPerfilPreview(URL.createObjectURL(file))
+    }
   }
 
-  async function handleGaleria(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleGaleria(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files || [])
-    const b64s = await Promise.all(files.map(fileToBase64))
-    setGaleria((prev) => [...prev, ...b64s].slice(0, 9))
+    const nuevas = files.slice(0, 9 - galeria.length)
+    setGaleria((prev) => [...prev, ...nuevas])
+    setGaleriaPreview((prev) => [...prev, ...nuevas.map((f) => URL.createObjectURL(f))].slice(0, 9))
   }
-
   async function registrarCliente() {
     if (!cNombre || !cEmail || !cPassword) { setError('Completá todos los campos obligatorios.'); return }
     if (cPassword.length < 6) { setError('La contraseña debe tener al menos 6 caracteres.'); return }
@@ -104,14 +83,36 @@ function RegistroContent() {
       setError('Completá todos los campos obligatorios.'); return
     }
     if (pPassword.length < 6) { setError('La contraseña debe tener al menos 6 caracteres.'); return }
-    setLoading(true); setError('')
-    const result = await registrarProveedorAction({
-      nombre: pNombre, nombreNegocio: pNegocio, email: pEmail, password: pPassword,
-      telefono: pTel, instagram: pIg, cat: pCat, suburb: pSuburb,
-      descripcion: pDesc, horario: pHorario, direccion: pDireccion, fotoPerfil, galeria,
-      servicios: servicios.filter((s) => s.name.trim()),
-    })
-    if (result.error) { setError(result.error); setLoading(false); return }
+   setLoading(true); setError('')
+  const result = await registrarProveedorAction({
+    nombre: pNombre, nombreNegocio: pNegocio, email: pEmail, password: pPassword,
+    telefono: pTel, instagram: pIg, cat: pCat, suburb: pSuburb,
+    descripcion: pDesc, horario: pHorario, direccion: pDireccion,
+    fotoPerfil: '', galeria: [],
+    servicios: servicios.filter((s) => s.name.trim()),
+  })
+  if (result.error) { setError(result.error); setLoading(false); return }
+
+  // Subir imágenes a Storage con el userId real
+  const userId = result.userId || ''
+  if (userId) {
+    try {
+      if (fotoPerfil) {
+        const fotoUrl = await uploadProviderImage(fotoPerfil, userId, 0)
+        // Actualizar avatar_url en la tabla
+        await fetch('/api/update-avatar', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ proveedorId: result.proveedorId, fotoUrl }),
+        }).catch(() => {})
+      }
+      for (let i = 0; i < galeria.length; i++) {
+        await uploadProviderImage(galeria[i], userId, i + 1)
+      }
+    } catch (imgError) {
+      console.error('Error subiendo imágenes:', imgError)
+    }
+  }
 
     const sesion: Usuario = {
       id: `u_${Date.now()}`, nombre: pNombre, email: pEmail,
@@ -208,8 +209,8 @@ function RegistroContent() {
                   <div onClick={() => fotoRef.current?.click()} className="border-2 border-dashed border-cl-gray-light rounded-xl p-5 text-center cursor-pointer hover:border-cl-verde transition-colors bg-cl-bg">
                     {fotoPerfil ? (
                       <div className="relative inline-block">
-                        <img src={fotoPerfil} alt="Preview foto de perfil" className="w-24 h-24 rounded-xl object-cover mx-auto" />
-                        <button onClick={(e) => { e.stopPropagation(); setFotoPerfil('') }} className="absolute -top-2 -right-2 bg-red-500 text-white w-5 h-5 rounded-full flex items-center justify-center"><X size={10} /></button>
+                        <img src={fotoPerfilPreview} alt="Preview foto de perfil" className="w-24 h-24 rounded-xl object-cover mx-auto" />
+                        <button onClick={(e) => { e.stopPropagation(); setFotoPerfil(null); setFotoPerfilPreview('') }} className="absolute -top-2 -right-2 bg-red-500 text-white w-5 h-5 rounded-full flex items-center justify-center"><X size={10} /></button>
                       </div>
                     ) : (
                       <>
@@ -224,10 +225,13 @@ function RegistroContent() {
 
                 <Field label={`Galería de trabajos (${galeria.length}/9)`}>
                   <div className="grid grid-cols-3 gap-2 mb-2">
-                    {galeria.map((img, i) => (
-                      <div key={i} className="relative aspect-square">
-                        <img src={img} alt={`Trabajo ${i + 1}`} className="w-full h-full object-cover rounded-xl" />
-                        <button onClick={() => setGaleria((prev) => prev.filter((_, idx) => idx !== i))} className="absolute -top-1.5 -right-1.5 bg-red-500 text-white w-5 h-5 rounded-full flex items-center justify-center"><X size={9} /></button>
+                    {galeriaPreview.map((img, i) => (
+  <div key={i} className="relative aspect-square">
+    <img src={img} alt={`Trabajo ${i + 1}`} className="w-full h-full object-cover rounded-xl" />
+    <button onClick={() => {
+      setGaleria((prev) => prev.filter((_, idx) => idx !== i))
+      setGaleriaPreview((prev) => prev.filter((_, idx) => idx !== i))
+    }} className="absolute -top-1.5 -right-1.5 bg-red-500 text-white w-5 h-5 rounded-full flex items-center justify-center"><X size={9} /></button>
                       </div>
                     ))}
                     {galeria.length < 9 && (
