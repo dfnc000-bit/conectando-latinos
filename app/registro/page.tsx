@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { Upload, X, Plus, Trash2 } from 'lucide-react'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
-import { registrarClienteAction, registrarProveedorAction } from '@/lib/actions'
+import { registrarClienteAction, registrarProveedorAction, updateProveedorAction } from '@/lib/actions'
 import { uploadProviderImage } from '@/lib/uploadImage'
 import { setSesion } from '@/lib/store'
 import { CATEGORIAS, SUBURBIOS, type Usuario } from '@/lib/types'
@@ -97,17 +97,24 @@ const [galeriaPreview, setGaleriaPreview] = useState<string[]>([])
   const userId = result.userId || ''
   if (userId) {
     try {
+      const updates: Record<string, any> = {}
+
       if (fotoPerfil) {
         const fotoUrl = await uploadProviderImage(fotoPerfil, userId, 0)
-        // Actualizar avatar_url en la tabla
-        await fetch('/api/update-avatar', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ proveedorId: result.proveedorId, fotoUrl }),
-        }).catch(() => {})
+        updates.avatar_url = fotoUrl
       }
+
+      const galeriaUrls: string[] = []
       for (let i = 0; i < galeria.length; i++) {
-        await uploadProviderImage(galeria[i], userId, i + 1)
+        const url = await uploadProviderImage(galeria[i], userId, i + 1)
+        galeriaUrls.push(url)
+      }
+      if (galeriaUrls.length > 0) {
+        updates.galeria = galeriaUrls
+      }
+
+      if (Object.keys(updates).length > 0 && result.proveedorId) {
+        await updateProveedorAction(result.proveedorId, updates)
       }
     } catch (imgError) {
       console.error('Error subiendo imágenes:', imgError)
