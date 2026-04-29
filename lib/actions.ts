@@ -420,9 +420,23 @@ export async function adminDeleteProveedorAction(id: string) {
 
 export async function adminGetUsuariosAction() {
   const supabase = await createClient()
-  const { data } = await supabase
+
+  const { data: rechazados } = await supabase
+    .from('proveedores')
+    .select('user_id')
+    .eq('estado', 'rechazado')
+
+  const idsRechazados = rechazados?.map((r: any) => r.user_id).filter(Boolean) ?? []
+
+  let query = supabase
     .from('perfiles')
     .select('*')
     .order('fecha_registro', { ascending: false })
+
+  if (idsRechazados.length > 0) {
+    query = query.not('id', 'in', `(${idsRechazados.join(',')})`)
+  }
+
+  const { data } = await query
   return data ?? []
 }
