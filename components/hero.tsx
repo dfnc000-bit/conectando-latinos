@@ -25,7 +25,10 @@ export function Hero() {
   }
 
   return (
-    <section className="bg-cl-dark relative overflow-hidden pt-8 pb-0 px-6 text-center">
+    <section
+      className="bg-cl-dark relative overflow-hidden px-6 text-center flex flex-col"
+      style={{ minHeight: '100vh' }}
+    >
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -34,19 +37,20 @@ export function Hero() {
         }}
       />
 
-      <div className="relative z-10 max-w-3xl mx-auto">
+      {/* Contenido central — crece para ocupar el espacio disponible */}
+      <div className="relative z-10 max-w-3xl mx-auto flex flex-col items-center justify-center flex-1 py-8">
 
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 bg-white/[0.06] border border-white/[0.12] rounded-full px-4 py-1.5 mb-5">
+        <div className="inline-flex items-center gap-2 bg-white/[0.06] border border-white/[0.12] rounded-full px-4 py-1.5 mb-6">
           <span className="text-white/50 text-xs font-bold tracking-widest uppercase">Melbourne, Australia</span>
           <span className="w-1 h-1 rounded-full bg-white/20" />
           <span className="text-cl-verde2 text-xs font-bold tracking-widest uppercase">Para la comunidad latina</span>
         </div>
 
-        {/* Heading — tamaño reducido para que la barra inferior sea visible */}
+        {/* Heading */}
         <h1
-          className="font-syne text-white font-extrabold leading-[1.06] tracking-tight mb-4 text-balance"
-          style={{ fontSize: 'clamp(1.8rem, 4.5vw, 3.2rem)' }}
+          className="font-syne text-white font-extrabold leading-[1.06] tracking-tight mb-5 text-balance"
+          style={{ fontSize: 'clamp(2.2rem, 5vw, 3.8rem)' }}
         >
           Servicios de belleza y bienestar<br />
           <span className="text-cl-verde2">en español</span>
@@ -54,13 +58,13 @@ export function Hero() {
           cerca de <span className="text-cl-gold2">ti</span>
         </h1>
 
-        {/* Subtítulo corto */}
-        <p className="text-white/50 text-sm leading-relaxed max-w-lg mx-auto mb-7">
+        {/* Subtítulo */}
+        <p className="text-white/50 text-base leading-relaxed max-w-lg mx-auto mb-8">
           Profesionales latinos en Melbourne. Atención en tu idioma, contacto directo por WhatsApp.
         </p>
 
         {/* CTAs */}
-        <div className="flex gap-3 justify-center flex-wrap mb-7">
+        <div className="flex gap-3 justify-center flex-wrap mb-8">
           <button
             onClick={handleSearch}
             className="flex items-center gap-3 bg-white/[0.05] border border-cl-verde hover:bg-cl-verde transition-all rounded-2xl px-5 py-4 text-left min-w-[220px] text-white group"
@@ -84,7 +88,7 @@ export function Hero() {
         </div>
 
         {/* Barra de búsqueda */}
-        <div className="flex bg-white/[0.07] border border-white/[0.14] rounded-xl overflow-hidden focus-within:border-cl-verde2 transition-colors max-w-2xl mx-auto">
+        <div className="flex w-full bg-white/[0.07] border border-white/[0.14] rounded-xl overflow-hidden focus-within:border-cl-verde2 transition-colors max-w-2xl mx-auto">
           <div className="flex items-center pl-4 text-white/30">
             <Search size={16} />
           </div>
@@ -119,8 +123,8 @@ export function Hero() {
         </div>
       </div>
 
-      {/* Stats — barra inferior con las 4 métricas, sin duplicados arriba */}
-      <div className="relative z-10 mt-8 border-t border-white/[0.08]">
+      {/* Stats — pegados al fondo del 100vh */}
+      <div className="relative z-10 border-t border-white/[0.08]">
         <div className="max-w-3xl mx-auto grid grid-cols-4 divide-x divide-white/[0.08]">
           {STATS.map((s) => (
             <div key={s.label} className="text-center py-5 px-4">
