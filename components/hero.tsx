@@ -50,7 +50,7 @@ export function Hero() {
         {/* Heading */}
         <h1
           className="font-syne text-white font-extrabold leading-[1.06] tracking-tight mb-5 text-balance"
-          style={{ fontSize: 'clamp(2.2rem, 5vw, 3.8rem)' }}
+          style={{ fontSize: 'clamp(1.9rem, 4.2vw, 3.2rem)' }}
         >
           Servicios de belleza y bienestar<br />
           <span className="text-cl-verde2">en español</span>
