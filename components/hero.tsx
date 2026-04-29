@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Search, MapPin, ArrowRight } from 'lucide-react'
+import { Search, MapPin, ArrowRight, Plus } from 'lucide-react'
 import { SUBURBIOS } from '@/lib/types'
 
 const STATS = [
@@ -25,7 +25,8 @@ export function Hero() {
   }
 
   return (
-    <section className="bg-cl-dark relative overflow-hidden pt-20 pb-16 px-6 text-center">
+    <section className="bg-cl-dark relative overflow-hidden pt-20 pb-0 px-6 text-center">
+      {/* Fondo con gradientes */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -35,6 +36,7 @@ export function Hero() {
       />
 
       <div className="relative z-10 max-w-3xl mx-auto">
+
         {/* Badge */}
         <div className="inline-flex items-center gap-2 bg-white/[0.06] border border-white/[0.12] rounded-full px-4 py-1.5 mb-6">
           <span className="text-white/50 text-xs font-bold tracking-widest uppercase">Melbourne, Australia</span>
@@ -42,7 +44,7 @@ export function Hero() {
           <span className="text-cl-verde2 text-xs font-bold tracking-widest uppercase">Para la comunidad latina</span>
         </div>
 
-        {/* Heading */}
+        {/* Heading — CAMBIO: "vos" → "ti" */}
         <h1
           className="font-syne text-white font-extrabold leading-[1.06] tracking-tight mb-5 text-balance"
           style={{ fontSize: 'clamp(2rem, 5.5vw, 3.75rem)' }}
@@ -51,15 +53,35 @@ export function Hero() {
           y bienestar{' '}
           <span className="text-cl-verde2">en español</span>
           <br />
-          cerca de <span className="text-cl-gold2">vos</span>
+          cerca de <span className="text-cl-gold2">ti</span>
         </h1>
 
-        <p className="text-white/50 text-base leading-relaxed max-w-lg mx-auto mb-10">
-          Conectamos a emprendedores latinos en Melbourne con clientes que buscan servicios de calidad, a buen precio y en su propio idioma.
+        {/* Subtítulo — CAMBIO: más corto y directo */}
+        <p className="text-white/50 text-base leading-relaxed max-w-lg mx-auto mb-6">
+          Profesionales latinos en Melbourne. Atención en tu idioma, contacto directo por WhatsApp.
         </p>
 
-        {/* Path selector */}
-        <div className="flex gap-3 justify-center flex-wrap mb-10">
+        {/* Prueba social compacta — NUEVO: debajo del subtítulo, antes de los CTAs */}
+        <div className="flex items-center justify-center gap-4 flex-wrap mb-8">
+          <div className="flex items-center gap-1.5">
+            <span className="text-cl-gold2 text-sm tracking-tight">★★★★★</span>
+            <span className="text-white font-bold text-sm">4.9</span>
+            <span className="text-white/40 text-xs">promedio</span>
+          </div>
+          <span className="w-px h-3 bg-white/20" />
+          <div className="flex items-center gap-1.5">
+            <span className="text-white font-bold text-sm">80+</span>
+            <span className="text-white/40 text-xs">proveedores activos</span>
+          </div>
+          <span className="w-px h-3 bg-white/20" />
+          <div className="flex items-center gap-1.5">
+            <span className="text-cl-verde2 font-bold text-sm">Gratis</span>
+            <span className="text-white/40 text-xs">para clientes</span>
+          </div>
+        </div>
+
+        {/* CTAs — sin cambios estructurales, mejorado texto */}
+        <div className="flex gap-3 justify-center flex-wrap mb-8">
           <button
             onClick={handleSearch}
             className="flex items-center gap-3 bg-white/[0.05] border border-cl-verde hover:bg-cl-verde transition-all rounded-2xl px-5 py-4 text-left min-w-[220px] text-white group"
@@ -74,16 +96,16 @@ export function Hero() {
             href="/registro?tab=proveedor"
             className="flex items-center gap-3 bg-white/[0.05] border border-white/[0.12] hover:border-cl-gold transition-all rounded-2xl px-5 py-4 text-left min-w-[220px] text-white group"
           >
-            <ArrowRight size={22} className="text-cl-gold2 flex-shrink-0" />
+            <Plus size={22} className="text-cl-gold2 flex-shrink-0" />
             <div>
-              <p className="font-bold text-sm">Ofrecer un servicio</p>
-              <p className="text-white/55 text-xs mt-0.5">Publicá tu negocio gratis hoy</p>
+              <p className="font-bold text-sm">Publicá tu negocio gratis</p>
+              <p className="text-white/55 text-xs mt-0.5">¿Sos proveedor? Publicá gratis</p>
             </div>
           </a>
         </div>
 
-        {/* Search bar */}
-        <div className="flex bg-white/[0.07] border border-white/[0.14] rounded-xl overflow-hidden focus-within:border-cl-verde2 transition-colors max-w-2xl mx-auto mb-12">
+        {/* Barra de búsqueda — sin cambios */}
+        <div className="flex bg-white/[0.07] border border-white/[0.14] rounded-xl overflow-hidden focus-within:border-cl-verde2 transition-colors max-w-2xl mx-auto">
           <div className="flex items-center pl-4 text-white/30">
             <Search size={16} />
           </div>
@@ -116,17 +138,20 @@ export function Hero() {
             Buscar
           </button>
         </div>
+      </div>
 
-        {/* Stats */}
-        <div className="flex justify-center gap-8 md:gap-14 flex-wrap">
+      {/* Stats — CAMBIO: movidos al fondo como barra separada, sin repetición */}
+      <div className="relative z-10 mt-12 border-t border-white/[0.08]">
+        <div className="max-w-3xl mx-auto grid grid-cols-4 divide-x divide-white/[0.08]">
           {STATS.map((s) => (
-            <div key={s.label} className="text-center">
-              <p className="font-syne text-cl-verde2 text-3xl font-extrabold leading-none">{s.value}</p>
-              <p className="text-white/40 text-xs mt-1">{s.label}</p>
+            <div key={s.label} className="text-center py-5 px-4">
+              <p className="font-syne text-cl-verde2 text-2xl font-extrabold leading-none">{s.value}</p>
+              <p className="text-white/40 text-xs mt-1.5">{s.label}</p>
             </div>
           ))}
         </div>
       </div>
+
     </section>
   )
 }
