@@ -131,9 +131,13 @@ export async function getResumenClicksAction(proveedorId: string) {
 
 export async function loginAction(email: string, password: string) {
   // Admin hardcodeado
-  if (email === 'admin@conectandolatinos.com' && password === 'admin123') {
-    return { tipo: 'admin' as const, error: null }
-  }
+ // ✅ REEMPLAZAR POR ESTO
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? ''
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? ''
+
+if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD && ADMIN_EMAIL !== '') {
+  return { tipo: 'admin' as const, error: null }
+}
 
   const supabase = await createClient()
   const { data, error } = await supabase.auth.signInWithPassword({ email, password })
