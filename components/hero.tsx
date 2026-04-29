@@ -25,7 +25,7 @@ export function Hero() {
   }
 
   return (
-    <section className="bg-cl-dark relative overflow-hidden pt-20 pb-0 px-6 text-center">
+    <section className="bg-cl-dark relative overflow-hidden pt-8 pb-0 px-6 text-center">
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -37,16 +37,16 @@ export function Hero() {
       <div className="relative z-10 max-w-3xl mx-auto">
 
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 bg-white/[0.06] border border-white/[0.12] rounded-full px-4 py-1.5 mb-6">
+        <div className="inline-flex items-center gap-2 bg-white/[0.06] border border-white/[0.12] rounded-full px-4 py-1.5 mb-5">
           <span className="text-white/50 text-xs font-bold tracking-widest uppercase">Melbourne, Australia</span>
           <span className="w-1 h-1 rounded-full bg-white/20" />
           <span className="text-cl-verde2 text-xs font-bold tracking-widest uppercase">Para la comunidad latina</span>
         </div>
 
-        {/* Heading — 3 renglones: línea 1 normal / línea 2 verde / línea 3 con "ti" dorado */}
+        {/* Heading — tamaño reducido para que la barra inferior sea visible */}
         <h1
-          className="font-syne text-white font-extrabold leading-[1.06] tracking-tight mb-5 text-balance"
-          style={{ fontSize: 'clamp(2.4rem, 6.5vw, 4.5rem)' }}
+          className="font-syne text-white font-extrabold leading-[1.06] tracking-tight mb-4 text-balance"
+          style={{ fontSize: 'clamp(1.8rem, 4.5vw, 3.2rem)' }}
         >
           Servicios de belleza y bienestar<br />
           <span className="text-cl-verde2">en español</span>
@@ -55,31 +55,12 @@ export function Hero() {
         </h1>
 
         {/* Subtítulo corto */}
-        <p className="text-white/50 text-base leading-relaxed max-w-lg mx-auto mb-6">
+        <p className="text-white/50 text-sm leading-relaxed max-w-lg mx-auto mb-7">
           Profesionales latinos en Melbourne. Atención en tu idioma, contacto directo por WhatsApp.
         </p>
 
-        {/* Prueba social — UNA sola vez aquí, NO se repite abajo */}
-        <div className="flex items-center justify-center gap-4 flex-wrap mb-8">
-          <div className="flex items-center gap-1.5">
-            <span className="text-cl-gold2 text-sm tracking-tight">★★★★★</span>
-            <span className="text-white font-bold text-sm">4.9</span>
-            <span className="text-white/40 text-xs">promedio</span>
-          </div>
-          <span className="w-px h-3 bg-white/20" />
-          <div className="flex items-center gap-1.5">
-            <span className="text-white font-bold text-sm">80+</span>
-            <span className="text-white/40 text-xs">proveedores activos</span>
-          </div>
-          <span className="w-px h-3 bg-white/20" />
-          <div className="flex items-center gap-1.5">
-            <span className="text-cl-verde2 font-bold text-sm">Gratis</span>
-            <span className="text-white/40 text-xs">para clientes</span>
-          </div>
-        </div>
-
         {/* CTAs */}
-        <div className="flex gap-3 justify-center flex-wrap mb-8">
+        <div className="flex gap-3 justify-center flex-wrap mb-7">
           <button
             onClick={handleSearch}
             className="flex items-center gap-3 bg-white/[0.05] border border-cl-verde hover:bg-cl-verde transition-all rounded-2xl px-5 py-4 text-left min-w-[220px] text-white group"
@@ -138,8 +119,8 @@ export function Hero() {
         </div>
       </div>
 
-      {/* Stats — barra inferior SIN "80+" ni "4.9" para no repetir la prueba social de arriba */}
-      <div className="relative z-10 mt-12 border-t border-white/[0.08]">
+      {/* Stats — barra inferior con las 4 métricas, sin duplicados arriba */}
+      <div className="relative z-10 mt-8 border-t border-white/[0.08]">
         <div className="max-w-3xl mx-auto grid grid-cols-4 divide-x divide-white/[0.08]">
           {STATS.map((s) => (
             <div key={s.label} className="text-center py-5 px-4">
