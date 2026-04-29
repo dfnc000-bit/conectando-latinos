@@ -259,7 +259,7 @@ export async function registrarProveedorAction(formData: {
   }
 
   revalidatePath('/servicios')
-  return { error: null, proveedorId: provId }
+  return { error: null, proveedorId: provId, userId: authData.user.id }
 }
 
 // ── PROVEEDORES ─────────────────────────────────────────────────────────────
