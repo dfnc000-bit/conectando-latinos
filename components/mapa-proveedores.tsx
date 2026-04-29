@@ -58,7 +58,8 @@ export default function MapaProveedores({ proveedores }: Props) {
         attribution: '© OpenStreetMap contributors',
       }).addTo(map)
 
-      mapInstanceRef.current = map
+     mapInstanceRef.current = map
+      setMapaListo(true)
     }
     document.head.appendChild(script)
 
@@ -71,10 +72,12 @@ export default function MapaProveedores({ proveedores }: Props) {
   }, [])
 
   // Actualizar marcadores cuando cambian los proveedores
+  const [mapaListo, setMapaListo] = useState(false)
+
   useEffect(() => {
     const map = mapInstanceRef.current
     const L = (window as any).L
-    if (!map || !L) return
+    if (!map || !L || !mapaListo) return
 
     // Limpiar marcadores anteriores
     markersRef.current.forEach((m) => m.remove())
@@ -110,7 +113,7 @@ export default function MapaProveedores({ proveedores }: Props) {
 
       markersRef.current.push(marker)
     })
-  }, [proveedores, mapInstanceRef.current])
+ }, [proveedores, mapaListo])
 
   return (
     <div className="relative w-full h-full min-h-[520px]">
