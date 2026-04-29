@@ -1,37 +1,23 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { Star, MessageCircle, X, MapPin, ExternalLink } from 'lucide-react'
 import type { Proveedor } from '@/lib/types'
 
-const CAT_COLORES: Record<string, { bg: string; text: string; hex: string }> = {
-  'Peluquería':  { bg: 'bg-pink-500',   text: 'text-pink-500',   hex: '#ec4899' },
-  'Barbería':    { bg: 'bg-blue-500',    text: 'text-blue-500',   hex: '#3b82f6' },
-  'Uñas':        { bg: 'bg-purple-500',  text: 'text-purple-500', hex: '#a855f7' },
-  'Masajes':     { bg: 'bg-green-500',   text: 'text-green-500',  hex: '#22c55e' },
-  'Maquillaje':  { bg: 'bg-orange-500',  text: 'text-orange-500', hex: '#f97316' },
-  'Faciales':    { bg: 'bg-teal-500',    text: 'text-teal-500',   hex: '#14b8a6' },
-  'Depilación':  { bg: 'bg-red-500',     text: 'text-red-500',    hex: '#ef4444' },
-  'Pestañas':    { bg: 'bg-indigo-500',  text: 'text-indigo-500', hex: '#6366f1' },
+const CAT_COLORES: Record<string, { hex: string }> = {
+  'Peluquería':  { hex: '#ec4899' },
+  'Barbería':    { hex: '#3b82f6' },
+  'Uñas':        { hex: '#a855f7' },
+  'Masajes':     { hex: '#22c55e' },
+  'Maquillaje':  { hex: '#f97316' },
+  'Faciales':    { hex: '#14b8a6' },
+  'Depilación':  { hex: '#ef4444' },
+  'Pestañas':    { hex: '#6366f1' },
 }
 
-function getCat(cat: string) {
-  return CAT_COLORES[cat] ?? { bg: 'bg-cl-verde', text: 'text-cl-verde', hex: '#5cbe8a' }
-}
-
-// v2 — sin leaflet — Bounds del mapa de Melbourne que vamos a mostrar
-const MAP_BOUNDS = {
-  latMin: -38.18,
-  latMax: -37.55,
-  lngMin: 144.55,
-  lngMax: 145.40,
-}
-
-function latLngToPercent(lat: number, lng: number) {
-  const x = ((lng - MAP_BOUNDS.lngMin) / (MAP_BOUNDS.lngMax - MAP_BOUNDS.lngMin)) * 100
-  const y = ((MAP_BOUNDS.latMax - lat) / (MAP_BOUNDS.latMax - MAP_BOUNDS.latMin)) * 100
-  return { x, y }
+function getCatColor(cat: string) {
+  return CAT_COLORES[cat]?.hex ?? '#1a8a6e'
 }
 
 interface Props {
@@ -39,86 +25,119 @@ interface Props {
 }
 
 export default function MapaProveedores({ proveedores }: Props) {
+  const mapRef = useRef<HTMLDivElement>(null)
+  const mapInstanceRef = useRef<any>(null)
+  const markersRef = useRef<any[]>([])
   const [seleccionado, setSeleccionado] = useState<Proveedor | null>(null)
-  const mapaRef = useRef<HTMLDivElement>(null)
 
   const conCoordenadas = proveedores.filter((p) => p.lat && p.lng)
   const categorias = Array.from(new Set(conCoordenadas.map((p) => p.cat).filter(Boolean)))
 
-  // Cerrar tarjeta al hacer click fuera
   useEffect(() => {
-    function handler(e: MouseEvent) {
-      const target = e.target as HTMLElement
-      if (!target.closest('[data-pin]') && !target.closest('[data-card]')) {
-        setSeleccionado(null)
+    if (!mapRef.current || mapInstanceRef.current) return
+
+    // Cargar Leaflet dinámicamente
+    const link = document.createElement('link')
+    link.rel = 'stylesheet'
+    link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
+    document.head.appendChild(link)
+
+    const script = document.createElement('script')
+    script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'
+    script.onload = () => {
+      const L = (window as any).L
+      if (!mapRef.current || mapInstanceRef.current) return
+
+      const map = L.map(mapRef.current, {
+        center: [-37.8136, 144.9631],
+        zoom: 11,
+        zoomControl: true,
+      })
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+      }).addTo(map)
+
+      mapInstanceRef.current = map
+    }
+    document.head.appendChild(script)
+
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove()
+        mapInstanceRef.current = null
       }
     }
-    document.addEventListener('mousedown', handler)
-    return () => document.removeEventListener('mousedown', handler)
   }, [])
 
+  // Actualizar marcadores cuando cambian los proveedores
+  useEffect(() => {
+    const map = mapInstanceRef.current
+    const L = (window as any).L
+    if (!map || !L) return
+
+    // Limpiar marcadores anteriores
+    markersRef.current.forEach((m) => m.remove())
+    markersRef.current = []
+
+    conCoordenadas.forEach((p) => {
+      const color = getCatColor(p.cat)
+      const nombre = p.nombre.split(' ')[0]
+
+      const icon = L.divIcon({
+        className: '',
+        html: `
+          <div style="
+            display: flex; align-items: center; gap: 5px;
+            background: white; border: 2px solid white;
+            padding: 5px 10px; border-radius: 999px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+            font-size: 11px; font-weight: 800;
+            color: #1a1a2e; white-space: nowrap;
+            cursor: pointer;
+          ">
+            <span style="width:8px;height:8px;border-radius:50%;background:${color};flex-shrink:0;display:inline-block;"></span>
+            ${nombre}
+          </div>
+          <div style="width:8px;height:4px;background:rgba(0,0,0,0.15);border-radius:50%;margin:2px auto 0;filter:blur(1px);"></div>
+        `,
+        iconAnchor: [40, 36],
+      })
+
+      const marker = L.marker([p.lat, p.lng], { icon })
+        .addTo(map)
+        .on('click', () => setSeleccionado((prev) => prev?.id === p.id ? null : p))
+
+      markersRef.current.push(marker)
+    })
+  }, [proveedores, mapInstanceRef.current])
+
   return (
-    <div className="relative w-full h-full min-h-[520px] bg-[#e8f0e9] overflow-hidden rounded-none">
+    <div className="relative w-full h-full min-h-[520px]">
+      <div ref={mapRef} className="absolute inset-0 w-full h-full" />
 
-      {/* Mapa base via iframe sin marcadores */}
-      <iframe
-        src={`https://www.openstreetmap.org/export/embed.html?bbox=${MAP_BOUNDS.lngMin},${MAP_BOUNDS.latMin},${MAP_BOUNDS.lngMax},${MAP_BOUNDS.latMax}&layer=mapnik`}
-        className="absolute inset-0 w-full h-full border-0 pointer-events-auto"
-        title="Mapa Melbourne"
-        loading="lazy"
-      />
-
-      {/* Capa SVG para pines — encima del iframe */}
-      <div
-        ref={mapaRef}
-        className="absolute inset-0 pointer-events-none"
-        style={{ zIndex: 10 }}
-      >
-        {conCoordenadas.map((p) => {
-          const { x, y } = latLngToPercent(p.lat!, p.lng!)
-          const color = getCat(p.cat)
-          const esSeleccionado = seleccionado?.id === p.id
-
-          return (
-            <button
-              key={p.id}
-              data-pin
-              onClick={(e) => {
-                e.stopPropagation()
-                setSeleccionado(esSeleccionado ? null : p)
-              }}
-              className="absolute pointer-events-auto transform -translate-x-1/2 -translate-y-full transition-transform hover:scale-110 focus:outline-none"
-              style={{ left: `${x}%`, top: `${y}%`, zIndex: esSeleccionado ? 30 : 20 }}
-              title={p.nombre}
-            >
-              {/* Pin estilo Airbnb */}
-              <div
-                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full shadow-lg border-2 transition-all whitespace-nowrap
-                  ${esSeleccionado
-                    ? 'bg-cl-dark text-cl-verde2 border-cl-dark scale-110'
-                    : 'bg-white text-cl-dark border-white hover:border-cl-dark'
-                  }`}
-                style={{ fontSize: '0.7rem', fontWeight: 800 }}
-              >
-                <span
-                  className="w-2 h-2 rounded-full flex-shrink-0"
-                  style={{ backgroundColor: color.hex }}
-                />
-                {p.nombre.split(' ')[0]}
+      {/* Leyenda */}
+      {categorias.length > 0 && (
+        <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg p-3 min-w-[130px]" style={{ zIndex: 1000 }}>
+          <p className="text-[0.6rem] font-extrabold text-cl-gray uppercase tracking-widest mb-2">Categorias</p>
+          <div className="flex flex-col gap-1.5">
+            {categorias.map((cat) => (
+              <div key={cat} className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: getCatColor(cat) }} />
+                <span className="text-[0.65rem] text-cl-dark font-semibold truncate">{cat}</span>
+                <span className="text-[0.6rem] text-cl-gray ml-auto">{conCoordenadas.filter((p) => p.cat === cat).length}</span>
               </div>
-              {/* Sombra del pin */}
-              <div className="w-2 h-1 bg-black/20 rounded-full mx-auto mt-0.5 blur-sm" />
-            </button>
-          )
-        })}
-      </div>
+            ))}
+          </div>
+        </div>
+      )}
 
-      {/* Tarjeta flotante estilo Airbnb al seleccionar un pin */}
+      {/* Tarjeta al seleccionar */}
       {seleccionado && (
         <div
           data-card
           className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[300px] bg-white rounded-2xl shadow-2xl border border-cl-gray-light overflow-hidden"
-          style={{ zIndex: 40 }}
+          style={{ zIndex: 1000 }}
         >
           <div className="p-4">
             <button
@@ -127,17 +146,16 @@ export default function MapaProveedores({ proveedores }: Props) {
             >
               <X size={13} className="text-cl-gray" />
             </button>
-
-            {/* Cabecera */}
             <div className="flex items-start gap-3 pr-8">
               <div
-                className={`w-12 h-12 rounded-xl flex-shrink-0 flex items-center justify-center text-white text-lg font-extrabold ${getCat(seleccionado.cat).bg}`}
+                className="w-12 h-12 rounded-xl flex-shrink-0 flex items-center justify-center text-white text-lg font-extrabold"
+                style={{ backgroundColor: getCatColor(seleccionado.cat) }}
               >
                 {seleccionado.nombre?.charAt(0)}
               </div>
               <div>
                 <p className="font-extrabold text-cl-dark text-sm leading-tight">{seleccionado.nombre}</p>
-                <p className={`text-xs font-bold mt-0.5 ${getCat(seleccionado.cat).text}`}>{seleccionado.cat}</p>
+                <p className="text-xs font-bold mt-0.5" style={{ color: getCatColor(seleccionado.cat) }}>{seleccionado.cat}</p>
                 {seleccionado.rating && (
                   <div className="flex items-center gap-1 mt-1">
                     <Star size={11} className="text-amber-400 fill-amber-400" />
@@ -149,26 +167,18 @@ export default function MapaProveedores({ proveedores }: Props) {
                 )}
               </div>
             </div>
-
-            {/* Direccion */}
             {seleccionado.direccion && (
               <div className="flex items-start gap-2 mt-3 bg-cl-bg rounded-xl p-2.5">
                 <MapPin size={12} className="text-cl-verde mt-0.5 flex-shrink-0" />
                 <p className="text-xs text-cl-gray leading-relaxed">{seleccionado.direccion}</p>
               </div>
             )}
-
-            {/* Descripcion */}
             {seleccionado.descripcion && (
               <p className="text-xs text-cl-gray mt-2.5 leading-relaxed line-clamp-2">{seleccionado.descripcion}</p>
             )}
-
-            {/* Horario */}
             {seleccionado.horario && (
               <p className="text-[0.65rem] text-cl-verde font-semibold mt-1.5">{seleccionado.horario}</p>
             )}
-
-            {/* Botones */}
             <div className="flex gap-2 mt-3">
               <Link
                 href={`/proveedor/${seleccionado.id}`}
@@ -177,7 +187,7 @@ export default function MapaProveedores({ proveedores }: Props) {
                 <ExternalLink size={11} />
                 Ver perfil completo
               </Link>
-              <a
+              
                 href={`https://wa.me/${seleccionado.telefono}?text=Hola! Te vi en Conectando Latinos Melbourne y me interesa tu servicio de ${seleccionado.cat}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -191,32 +201,8 @@ export default function MapaProveedores({ proveedores }: Props) {
         </div>
       )}
 
-      {/* Leyenda de categorias */}
-      {categorias.length > 0 && (
-        <div
-          className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg p-3 min-w-[130px]"
-          style={{ zIndex: 20 }}
-        >
-          <p className="text-[0.6rem] font-extrabold text-cl-gray uppercase tracking-widest mb-2">Categorias</p>
-          <div className="flex flex-col gap-1.5">
-            {categorias.map((cat) => {
-              const color = getCat(cat)
-              const cantidad = conCoordenadas.filter((p) => p.cat === cat).length
-              return (
-                <div key={cat} className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: color.hex }} />
-                  <span className="text-[0.65rem] text-cl-dark font-semibold truncate">{cat}</span>
-                  <span className="text-[0.6rem] text-cl-gray ml-auto">{cantidad}</span>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Mensaje sin coordenadas */}
       {conCoordenadas.length === 0 && (
-        <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 20, pointerEvents: 'none' }}>
+        <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 1000, pointerEvents: 'none' }}>
           <div className="bg-white/95 rounded-2xl px-6 py-5 shadow-xl text-center max-w-xs mx-4">
             <MapPin size={32} className="text-cl-gray/30 mx-auto mb-3" />
             <p className="text-cl-dark font-bold text-sm">Sin ubicaciones exactas aun</p>
