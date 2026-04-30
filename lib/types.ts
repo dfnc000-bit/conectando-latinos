@@ -61,10 +61,28 @@ export const CATEGORIAS = [
 ]
 
 export const SUBURBIOS = [
-  'Melbourne CBD', 'Docklands', 'Footscray', 'Sunshine',
-  'St Albans', 'Werribee', 'Tarneit', 'Point Cook',
-  'Dandenong', 'Cranbourne',
-]
+  // Zona Central
+  'Melbourne CBD', 'Docklands', 'Southbank', 'Port Melbourne',
+
+  // Zona Oeste (más comunidad latina)
+  'Footscray', 'Sunshine', 'St Albans', 'Werribee', 'Tarneit',
+  'Point Cook', 'Hoppers Crossing', 'Wyndham Vale', 'Laverton',
+  'Altona', 'Williamstown', 'Melton', 'Caroline Springs',
+  'Truganina', 'Manor Lakes', 'Deer Park',
+
+  // Zona Norte
+  'Broadmeadows', 'Coburg', 'Brunswick', 'Essendon',
+  'Reservoir', 'Preston', 'Thomastown', 'Epping',
+  'Mill Park', 'South Morang', 'Lalor',
+
+  // Zona Este
+  'Box Hill', 'Springvale', 'Noble Park', 'Oakleigh',
+  'Clayton', 'Mulgrave', 'Rowville', 'Glen Waverley',
+
+  // Zona Sur
+  'Dandenong', 'Cranbourne', 'Frankston', 'Cheltenham',
+  'Moorabbin', 'Bentleigh', 'Mentone',
+].sort()
 
 export const GRAD_CATS: Record<string, string> = {
   'Peluquería': 'linear-gradient(135deg,#1a4a3a,#22b08c)',
