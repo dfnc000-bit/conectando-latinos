@@ -130,14 +130,12 @@ export async function getResumenClicksAction(proveedorId: string) {
 // ── AUTH ────────────────────────────────────────────────────────────────────
 
 export async function loginAction(email: string, password: string) {
-  // Admin hardcodeado
- // ✅ REEMPLAZAR POR ESTO
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? ''
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? ''
+  const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? ''
+  const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? ''
 
-if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD && ADMIN_EMAIL !== '') {
-  return { tipo: 'admin' as const, error: null }
-}
+  if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD && ADMIN_EMAIL !== '') {
+    return { tipo: 'admin' as const, error: null }
+  }
 
   const supabase = await createClient()
   const { data, error } = await supabase.auth.signInWithPassword({ email, password })
@@ -167,11 +165,14 @@ export async function logoutAction() {
   await supabase.auth.signOut()
 }
 
+// ── REGISTRO CLIENTE ─────────────────────────────────────────────────────────
+
 export async function registrarClienteAction(data: {
   nombre: string
   email: string
   password: string
   suburb: string
+  aceptaPublicidad: boolean   // ← NUEVO
 }) {
   const supabase = await createClient()
   const { error } = await supabase.auth.signUp({
@@ -185,12 +186,15 @@ export async function registrarClienteAction(data: {
         nombre: data.nombre,
         tipo: 'cliente',
         suburb: data.suburb,
+        acepta_publicidad: data.aceptaPublicidad,   // ← NUEVO — se guarda en user_metadata
       },
     },
   })
   if (error) return { error: error.message }
   return { error: null }
 }
+
+// ── REGISTRO PROVEEDOR ───────────────────────────────────────────────────────
 
 export async function registrarProveedorAction(formData: {
   nombre: string
@@ -207,6 +211,7 @@ export async function registrarProveedorAction(formData: {
   fotoPerfil: string
   galeria: string[]
   servicios: { name: string; price: string }[]
+  aceptaPublicidad: boolean   // ← NUEVO
 }) {
   const supabase = await createClient()
 
@@ -222,6 +227,7 @@ export async function registrarProveedorAction(formData: {
         nombre: formData.nombre,
         tipo: 'proveedor',
         suburb: formData.suburb,
+        acepta_publicidad: formData.aceptaPublicidad,   // ← NUEVO — se guarda en user_metadata
       },
     },
   })
@@ -248,6 +254,7 @@ export async function registrarProveedorAction(formData: {
     destacado: false,
     avatar_url: formData.fotoPerfil,
     galeria: formData.galeria,
+    acepta_publicidad: formData.aceptaPublicidad,   // ← NUEVO — también se guarda en la tabla proveedores
   })
 
   if (provError) return { error: provError.message, proveedorId: null }
@@ -292,7 +299,6 @@ export async function getProveedoresAction(filtros?: {
 
   const { data, error } = await query.order('destacado', { ascending: false }).order('rating', { ascending: false })
   if (error || !data || data.length === 0) {
-    // Fallback a datos locales cuando Supabase no esta disponible
     let resultado = SEED_PROVEEDORES as any[]
     if (filtros?.cat && filtros.cat !== 'todas') resultado = resultado.filter((p) => p.cat === filtros!.cat)
     if (filtros?.suburb) resultado = resultado.filter((p) => p.suburb === filtros!.suburb)
