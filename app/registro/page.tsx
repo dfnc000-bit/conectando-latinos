@@ -30,11 +30,15 @@ function RegistroContent() {
   const [error, setError] = useState('')
   const [exito, setExito] = useState('')
 
+  // ── Cliente ──────────────────────────────────────────
   const [cNombre, setCNombre] = useState('')
   const [cEmail, setCEmail] = useState('')
   const [cPassword, setCPassword] = useState('')
   const [cSuburb, setCSuburb] = useState('')
+  const [cAceptaDatos, setCAceptaDatos] = useState(false)
+  const [cAceptaPublicidad, setCAceptaPublicidad] = useState(false)
 
+  // ── Proveedor ─────────────────────────────────────────
   const [pNegocio, setPNegocio] = useState('')
   const [pNombre, setPNombre] = useState('')
   const [pEmail, setPEmail] = useState('')
@@ -46,15 +50,18 @@ function RegistroContent() {
   const [pIg, setPIg] = useState('')
   const [pHorario, setPHorario] = useState('')
   const [pDireccion, setPDireccion] = useState('')
- const [fotoPerfil, setFotoPerfil] = useState<File | null>(null)
-const [fotoPerfilPreview, setFotoPerfilPreview] = useState('')
-const [galeria, setGaleria] = useState<File[]>([])
-const [galeriaPreview, setGaleriaPreview] = useState<string[]>([])
+  const [pAceptaDatos, setPAceptaDatos] = useState(false)
+  const [pAceptaPublicidad, setPAceptaPublicidad] = useState(false)
+
+  const [fotoPerfil, setFotoPerfil] = useState<File | null>(null)
+  const [fotoPerfilPreview, setFotoPerfilPreview] = useState('')
+  const [galeria, setGaleria] = useState<File[]>([])
+  const [galeriaPreview, setGaleriaPreview] = useState<string[]>([])
   const [servicios, setServicios] = useState([{ name: '', price: '' }])
   const fotoRef = useRef<HTMLInputElement>(null)
   const galeriaRef = useRef<HTMLInputElement>(null)
 
- function handleFotoPerfil(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleFotoPerfil(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (file) {
       setFotoPerfil(file)
@@ -68,11 +75,19 @@ const [galeriaPreview, setGaleriaPreview] = useState<string[]>([])
     setGaleria((prev) => [...prev, ...nuevas])
     setGaleriaPreview((prev) => [...prev, ...nuevas.map((f) => URL.createObjectURL(f))].slice(0, 9))
   }
+
   async function registrarCliente() {
     if (!cNombre || !cEmail || !cPassword) { setError('Completá todos los campos obligatorios.'); return }
     if (cPassword.length < 6) { setError('La contraseña debe tener al menos 6 caracteres.'); return }
+    if (!cAceptaDatos) { setError('Debés aceptar el tratamiento de datos para continuar.'); return }
     setLoading(true); setError('')
-    const result = await registrarClienteAction({ nombre: cNombre, email: cEmail, password: cPassword, suburb: cSuburb })
+    const result = await registrarClienteAction({
+      nombre: cNombre,
+      email: cEmail,
+      password: cPassword,
+      suburb: cSuburb,
+      aceptaPublicidad: cAceptaPublicidad,
+    })
     if (result.error) { setError(result.error); setLoading(false); return }
     setExito('Cuenta creada. Revisá tu correo para confirmar y luego iniciá sesión.')
     setLoading(false)
@@ -83,52 +98,52 @@ const [galeriaPreview, setGaleriaPreview] = useState<string[]>([])
       setError('Completá todos los campos obligatorios.'); return
     }
     if (pPassword.length < 6) { setError('La contraseña debe tener al menos 6 caracteres.'); return }
-   setLoading(true); setError('')
-  const result = await registrarProveedorAction({
-    nombre: pNombre, nombreNegocio: pNegocio, email: pEmail, password: pPassword,
-    telefono: pTel, instagram: pIg, cat: pCat, suburb: pSuburb,
-    descripcion: pDesc, horario: pHorario, direccion: pDireccion,
-    fotoPerfil: '', galeria: [],
-    servicios: servicios.filter((s) => s.name.trim()),
-  })
-  if (result.error) { setError(result.error); setLoading(false); return }
+    if (!pAceptaDatos) { setError('Debés aceptar el tratamiento de datos para continuar.'); return }
+    setLoading(true); setError('')
+    const result = await registrarProveedorAction({
+      nombre: pNombre, nombreNegocio: pNegocio, email: pEmail, password: pPassword,
+      telefono: pTel, instagram: pIg, cat: pCat, suburb: pSuburb,
+      descripcion: pDesc, horario: pHorario, direccion: pDireccion,
+      fotoPerfil: '', galeria: [],
+      servicios: servicios.filter((s) => s.name.trim()),
+      aceptaPublicidad: pAceptaPublicidad,
+    })
+    if (result.error) { setError(result.error); setLoading(false); return }
 
-  // Subir imágenes a Storage con el userId real
-  const userId = result.userId || ''
-  if (userId) {
-    try {
-      const updates: Record<string, any> = {}
+    const userId = result.userId || ''
+    if (userId) {
+      try {
+        const updates: Record<string, any> = {}
 
-      if (fotoPerfil) {
-        const fotoUrl = await uploadProviderImage(fotoPerfil, userId, 0)
-        updates.avatar_url = fotoUrl
+        if (fotoPerfil) {
+          const fotoUrl = await uploadProviderImage(fotoPerfil, userId, 0)
+          updates.avatar_url = fotoUrl
+        }
+
+        const galeriaUrls: string[] = []
+        for (let i = 0; i < galeria.length; i++) {
+          const url = await uploadProviderImage(galeria[i], userId, i + 1)
+          galeriaUrls.push(url)
+        }
+        if (galeriaUrls.length > 0) {
+          updates.galeria = galeriaUrls
+        }
+
+        if (pDireccion) {
+          const coords = await geocodificarDireccion(pDireccion)
+          if (coords) {
+            updates.lat = coords.lat
+            updates.lng = coords.lng
+          }
+        }
+
+        if (Object.keys(updates).length > 0 && result.proveedorId) {
+          await updateProveedorAction(result.proveedorId, updates)
+        }
+      } catch (imgError) {
+        console.error('Error subiendo imágenes:', imgError)
       }
-
-      const galeriaUrls: string[] = []
-      for (let i = 0; i < galeria.length; i++) {
-        const url = await uploadProviderImage(galeria[i], userId, i + 1)
-        galeriaUrls.push(url)
-      }
-      if (galeriaUrls.length > 0) {
-        updates.galeria = galeriaUrls
-      }
-
-      // Geocodificar la dirección
-  if (pDireccion) {
-    const coords = await geocodificarDireccion(pDireccion)
-    if (coords) {
-      updates.lat = coords.lat
-      updates.lng = coords.lng
     }
-  }
-
-  if (Object.keys(updates).length > 0 && result.proveedorId) {
-    await updateProveedorAction(result.proveedorId, updates)
-  }
-    } catch (imgError) {
-      console.error('Error subiendo imágenes:', imgError)
-    }
-  }
 
     const sesion: Usuario = {
       id: `u_${Date.now()}`, nombre: pNombre, email: pEmail,
@@ -166,6 +181,7 @@ const [galeriaPreview, setGaleriaPreview] = useState<string[]>([])
               </div>
             )}
 
+            {/* ══════════════════ FORMULARIO CLIENTE ══════════════════ */}
             {tab === 'cliente' ? (
               <div className="flex flex-col gap-4">
                 <Field label="Nombre completo *"><input className="form-input" value={cNombre} onChange={(e) => setCNombre(e.target.value)} placeholder="Tu nombre completo" /></Field>
@@ -178,12 +194,46 @@ const [galeriaPreview, setGaleriaPreview] = useState<string[]>([])
                     <option>Otro</option>
                   </select>
                 </Field>
+
+                {/* ── Casillas de consentimiento ── */}
+                <div className="flex flex-col gap-3 pt-1">
+                  <label className="flex items-start gap-3 cursor-pointer group">
+                    <input
+                      type="checkbox"
+                      checked={cAceptaDatos}
+                      onChange={(e) => setCAceptaDatos(e.target.checked)}
+                      className="mt-0.5 w-4 h-4 accent-cl-verde flex-shrink-0 cursor-pointer"
+                    />
+                    <span className="text-xs text-cl-gray leading-relaxed">
+                      Acepto el{' '}
+                      <Link href="/politica-privacidad" target="_blank" className="text-cl-verde font-semibold hover:underline">
+                        tratamiento de mis datos personales
+                      </Link>{' '}
+                      según la política de privacidad. <span className="text-red-500 font-bold">*</span>
+                    </span>
+                  </label>
+
+                  <label className="flex items-start gap-3 cursor-pointer group">
+                    <input
+                      type="checkbox"
+                      checked={cAceptaPublicidad}
+                      onChange={(e) => setCAceptaPublicidad(e.target.checked)}
+                      className="mt-0.5 w-4 h-4 accent-cl-verde flex-shrink-0 cursor-pointer"
+                    />
+                    <span className="text-xs text-cl-gray leading-relaxed">
+                      Acepto recibir novedades, promociones y publicidad de Conectando Latinos al correo registrado. (Opcional)
+                    </span>
+                  </label>
+                </div>
+
                 <button onClick={registrarCliente} disabled={loading} className="w-full bg-cl-verde hover:bg-cl-verde2 text-white font-bold text-sm rounded-xl py-3.5 mt-2 transition-colors disabled:opacity-60">
                   {loading ? 'Creando cuenta...' : 'Crear cuenta gratis'}
                 </button>
                 <p className="text-center text-cl-gray text-xs">¿Ya tenés cuenta? <Link href="/login" className="text-cl-verde font-bold hover:underline">Iniciar sesión</Link></p>
               </div>
+
             ) : (
+            /* ══════════════════ FORMULARIO PROVEEDOR ══════════════════ */
               <div className="flex flex-col gap-4">
                 <Field label="Nombre del negocio *"><input className="form-input" value={pNegocio} onChange={(e) => setPNegocio(e.target.value)} placeholder="Ej: Barber Latino, Studio Ana..." /></Field>
                 <div className="grid grid-cols-2 gap-3">
@@ -242,12 +292,12 @@ const [galeriaPreview, setGaleriaPreview] = useState<string[]>([])
                 <Field label={`Galería de trabajos (${galeria.length}/9)`}>
                   <div className="grid grid-cols-3 gap-2 mb-2">
                     {galeriaPreview.map((img, i) => (
-  <div key={i} className="relative aspect-square">
-    <img src={img} alt={`Trabajo ${i + 1}`} className="w-full h-full object-cover rounded-xl" />
-    <button onClick={() => {
-      setGaleria((prev) => prev.filter((_, idx) => idx !== i))
-      setGaleriaPreview((prev) => prev.filter((_, idx) => idx !== i))
-    }} className="absolute -top-1.5 -right-1.5 bg-red-500 text-white w-5 h-5 rounded-full flex items-center justify-center"><X size={9} /></button>
+                      <div key={i} className="relative aspect-square">
+                        <img src={img} alt={`Trabajo ${i + 1}`} className="w-full h-full object-cover rounded-xl" />
+                        <button onClick={() => {
+                          setGaleria((prev) => prev.filter((_, idx) => idx !== i))
+                          setGaleriaPreview((prev) => prev.filter((_, idx) => idx !== i))
+                        }} className="absolute -top-1.5 -right-1.5 bg-red-500 text-white w-5 h-5 rounded-full flex items-center justify-center"><X size={9} /></button>
                       </div>
                     ))}
                     {galeria.length < 9 && (
@@ -275,6 +325,37 @@ const [galeriaPreview, setGaleriaPreview] = useState<string[]>([])
                   </button>
                 </Field>
 
+                {/* ── Casillas de consentimiento ── */}
+                <div className="flex flex-col gap-3 pt-1">
+                  <label className="flex items-start gap-3 cursor-pointer group">
+                    <input
+                      type="checkbox"
+                      checked={pAceptaDatos}
+                      onChange={(e) => setPAceptaDatos(e.target.checked)}
+                      className="mt-0.5 w-4 h-4 accent-cl-verde flex-shrink-0 cursor-pointer"
+                    />
+                    <span className="text-xs text-cl-gray leading-relaxed">
+                      Acepto el{' '}
+                      <Link href="/politica-privacidad" target="_blank" className="text-cl-verde font-semibold hover:underline">
+                        tratamiento de mis datos personales
+                      </Link>{' '}
+                      según la política de privacidad. <span className="text-red-500 font-bold">*</span>
+                    </span>
+                  </label>
+
+                  <label className="flex items-start gap-3 cursor-pointer group">
+                    <input
+                      type="checkbox"
+                      checked={pAceptaPublicidad}
+                      onChange={(e) => setPAceptaPublicidad(e.target.checked)}
+                      className="mt-0.5 w-4 h-4 accent-cl-verde flex-shrink-0 cursor-pointer"
+                    />
+                    <span className="text-xs text-cl-gray leading-relaxed">
+                      Acepto recibir novedades, promociones y publicidad de Conectando Latinos al correo registrado. (Opcional)
+                    </span>
+                  </label>
+                </div>
+
                 <button onClick={registrarProveedor} disabled={loading} className="w-full bg-cl-verde hover:bg-cl-verde2 text-white font-bold text-sm rounded-xl py-3.5 mt-2 transition-colors disabled:opacity-60">
                   {loading ? 'Publicando...' : 'Publicar mi negocio gratis'}
                 </button>
@@ -289,6 +370,7 @@ const [galeriaPreview, setGaleriaPreview] = useState<string[]>([])
     </div>
   )
 }
+
 export default function RegistroPage() {
   return (
     <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><p className="text-cl-gray">Cargando...</p></div>}>
