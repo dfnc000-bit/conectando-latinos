@@ -407,7 +407,11 @@ export async function adminGetProveedoresAction() {
 }
 
 export async function adminUpdateProveedorAction(id: string, updates: Record<string, any>) {
-  const supabase = await createClient()
+  const { createClient: createAdmin } = await import('@supabase/supabase-js')
+  const supabase = createAdmin(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
   const { error } = await supabase.from('proveedores').update(updates).eq('id', id)
   if (error) return { error: error.message }
   revalidatePath('/admin')
