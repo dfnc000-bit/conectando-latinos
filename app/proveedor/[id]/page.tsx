@@ -75,8 +75,8 @@ export default function PerfilPage() {
     )
   }
 
-  const grad = gradForCat(proveedor.cat)
-  const icon = iconForCat(proveedor.cat)
+  const grad = gradForCat(proveedor.cat[0])
+  const icon = iconForCat(proveedor.cat[0])
 
   return (
     <div className="min-h-screen flex flex-col bg-cl-bg">
