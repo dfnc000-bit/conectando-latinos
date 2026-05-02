@@ -108,7 +108,7 @@ export default function AdminPage() {
     .filter((c) => c.value !== 'todas')
     .map((c) => ({
       ...c,
-      count: proveedores.filter((p) => p.cat === c.value && p.estado === 'aprobado').length,
+      count: proveedores.filter((p) => p.cat.includes(c.value) && p.estado === 'aprobado').length,
     }))
     .filter((c) => c.count > 0)
     .sort((a, b) => b.count - a.count)
