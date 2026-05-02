@@ -244,7 +244,7 @@ export async function registrarProveedorAction(formData: {
     email: formData.email,
     telefono: formData.telefono.replace(/\D/g, ''),
     instagram: formData.instagram.replace('@', ''),
-    cat: formData.cat,
+    cat: Array.isArray(formData.cat) ? formData.cat : [formData.cat],
     suburb: formData.suburb,
     descripcion: formData.descripcion,
     horario: formData.horario || 'Lun–Vie 9am–6pm',
