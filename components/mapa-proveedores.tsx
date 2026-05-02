@@ -84,7 +84,7 @@ export default function MapaProveedores({ proveedores }: Props) {
     markersRef.current = []
 
     conCoordenadas.forEach((p) => {
-      const color = getCatColor(p.cat)
+      const color = getCatColor(p.cat[0])
       const nombre = p.nombre.split(' ')[0]
 
       const icon = L.divIcon({
