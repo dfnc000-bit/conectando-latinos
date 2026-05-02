@@ -154,14 +154,14 @@ export default function PerfilPage() {
               <p className="text-cl-gray text-[0.65rem] font-bold uppercase tracking-wider mb-1">Suburbio</p>
               <div className="flex items-center gap-1">
                 <MapPin size={12} className="text-cl-verde flex-shrink-0" />
-                <span className="font-semibold text-sm text-cl-dark truncate">{proveedor.suburb}</span>
+                <span className="font-semibold text-sm text-cl-verde2 truncate">{proveedor.suburb}</span>
               </div>
             </div>
             <div className="bg-cl-bg rounded-xl p-3 border border-cl-gray-light">
               <p className="text-cl-gray text-[0.65rem] font-bold uppercase tracking-wider mb-1">Horario</p>
               <div className="flex items-center gap-1">
                 <Clock size={12} className="text-cl-verde flex-shrink-0" />
-                <span className="font-semibold text-xs text-cl-dark">{proveedor.horario}</span>
+                <span className="font-semibold text-xs text-cl-verde2">{proveedor.horario}</span>
               </div>
             </div>
             <div className="bg-cl-bg rounded-xl p-3 border border-cl-gray-light">
