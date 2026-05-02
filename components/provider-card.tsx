@@ -10,8 +10,8 @@ interface ProviderCardProps {
 }
 
 export function ProviderCard({ proveedor: p, index = 0 }: ProviderCardProps) {
-  const grad = gradForCat(p.cat)
-  const icon = iconForCat(p.cat)
+  const grad = gradForCat(p.cat[0])
+  const icon = iconForCat(p.cat[0])
   const previewTags = p.servicios.slice(0, 3)
   const extra = p.servicios.length - 3
 
