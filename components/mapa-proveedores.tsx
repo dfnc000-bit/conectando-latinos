@@ -128,7 +128,7 @@ export default function MapaProveedores({ proveedores }: Props) {
               <div key={cat} className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: getCatColor(cat) }} />
                 <span className="text-[0.65rem] text-cl-dark font-semibold truncate">{cat}</span>
-                <span className="text-[0.6rem] text-cl-gray ml-auto">{conCoordenadas.filter((p) => p.cat === cat).length}</span>
+                <span className="text-[0.6rem] text-cl-gray ml-auto">{conCoordenadas.filter((p) => p.cat.includes(cat)).length}</span>
               </div>
             ))}
           </div>
