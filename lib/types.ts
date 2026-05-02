@@ -66,14 +66,14 @@ export const SUBURBIOS = [
 
   // Zona Oeste (más comunidad latina)
   'Footscray', 'Sunshine', 'St Albans', 'Werribee', 'Tarneit',
-  'Point Cook', 'Hoppers Crossing', 'Wyndham Vale', 'Laverton',
+  'Point Cook', 'Hoppers Crossing', 'Wyndham Vale', 'Laverton', 'Newport',
   'Altona', 'Williamstown', 'Melton', 'Caroline Springs',
   'Truganina', 'Manor Lakes', 'Deer Park',
 
   // Zona Norte
   'Broadmeadows', 'Coburg', 'Brunswick', 'Essendon',
   'Reservoir', 'Preston', 'Thomastown', 'Epping',
-  'Mill Park', 'South Morang', 'Lalor',
+  'Mill Park', 'South Morang', 'Lalor', 'Glenroy',
 
   // Zona Este
   'Box Hill', 'Springvale', 'Noble Park', 'Oakleigh',
