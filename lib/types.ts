@@ -58,6 +58,7 @@ export const CATEGORIAS = [
   { value: 'Depilación', label: 'Depilación', icon: '🌸' },
   { value: 'Microblading', label: 'Microblading', icon: '🖊️' },
   { value: 'Bienestar', label: 'Bienestar', icon: '🧘' },
+  { value: 'Tatuajes', label: 'Tatuajes', icon: '🪡' },
 ]
 
 export const SUBURBIOS = [
