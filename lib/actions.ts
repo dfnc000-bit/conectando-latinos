@@ -288,7 +288,7 @@ export async function getProveedoresAction(filtros?: {
     .select('*, servicios(*)')
     .eq('estado', 'aprobado')
 
-  if (filtros?.cat && filtros.cat !== 'todas') query = query.eq('cat', filtros.cat)
+  if (filtros?.cat && filtros.cat !== 'todas') query = query.contains('cat', [filtros.cat])
   if (filtros?.suburb) query = query.eq('suburb', filtros.suburb)
   if (filtros?.soloDisponibles) query = query.eq('disponible', true)
   if (filtros?.busqueda) {
