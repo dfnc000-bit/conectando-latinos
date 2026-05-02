@@ -31,7 +31,7 @@ export default function MapaProveedores({ proveedores }: Props) {
   const [seleccionado, setSeleccionado] = useState<Proveedor | null>(null)
 
   const conCoordenadas = proveedores.filter((p) => p.lat && p.lng)
-  const categorias = Array.from(new Set(conCoordenadas.map((p) => p.cat).filter(Boolean)))
+  const categorias = Array.from(new Set(conCoordenadas.flatMap((p) => p.cat).filter(Boolean)))
 
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return
@@ -152,13 +152,13 @@ export default function MapaProveedores({ proveedores }: Props) {
             <div className="flex items-start gap-3 pr-8">
               <div
                 className="w-12 h-12 rounded-xl flex-shrink-0 flex items-center justify-center text-white text-lg font-extrabold"
-                style={{ backgroundColor: getCatColor(seleccionado.cat) }}
+                style={{ backgroundColor: getCatColor(seleccionado.cat[0]) }}
               >
                 {seleccionado.nombre?.charAt(0)}
               </div>
               <div>
                 <p className="font-extrabold text-cl-dark text-sm leading-tight">{seleccionado.nombre}</p>
-                <p className="text-xs font-bold mt-0.5" style={{ color: getCatColor(seleccionado.cat) }}>{seleccionado.cat}</p>
+                <p className="text-xs font-bold mt-0.5" style={{ color: getCatColor(seleccionado.cat[0]) }}>{seleccionado.cat[0]}</p>
                 {seleccionado.rating && (
                   <div className="flex items-center gap-1 mt-1">
                     <Star size={11} className="text-amber-400 fill-amber-400" />
@@ -191,7 +191,7 @@ export default function MapaProveedores({ proveedores }: Props) {
                 Ver perfil completo
               </Link>
               
-               <a href={`https://wa.me/${seleccionado.telefono}?text=Hola! Te vi en Conectando Latinos Melbourne y me interesa tu servicio de ${seleccionado.cat}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-white text-xs font-bold rounded-xl px-3 py-2.5 hover:opacity-90 transition-opacity" style={{ backgroundColor: '#25d366' }}><MessageCircle size={12} />WA</a>
+               <a href={`https://wa.me/${seleccionado.telefono}?text=Hola! Te vi en Conectando Latinos Melbourne y me interesa tu servicio de ${seleccionado.cat[0]}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-white text-xs font-bold rounded-xl px-3 py-2.5 hover:opacity-90 transition-opacity" style={{ backgroundColor: '#25d366' }}><MessageCircle size={12} />WA</a>
             </div>
           </div>
         </div>
