@@ -30,7 +30,7 @@ export function ProviderCard({ proveedor: p, index = 0 }: ProviderCardProps) {
           />
         ) : null}
         <div className="absolute top-2.5 left-2.5 bg-black/60 backdrop-blur-sm text-white/90 text-[0.68rem] font-bold rounded-md px-2.5 py-1">
-          {p.cat}
+          {p.cat.join(' · ')}
         </div>
         <div
           className={`absolute top-2.5 right-2.5 text-[0.68rem] font-bold rounded-md px-2.5 py-1 backdrop-blur-sm ${
@@ -59,7 +59,7 @@ export function ProviderCard({ proveedor: p, index = 0 }: ProviderCardProps) {
         </div>
 
         <h3 className="font-syne font-bold text-cl-dark text-[0.95rem] mb-0.5 leading-tight">{p.nombreNegocio}</h3>
-        <p className="text-cl-verde text-xs font-bold mb-1">{p.cat}</p>
+        <p className="text-cl-verde text-xs font-bold mb-1">{p.cat.join(' · ')}</p>
         <div className="flex items-center gap-1 text-cl-gray text-xs mb-2">
           <MapPin size={11} />
           <span>{p.suburb}, Melbourne</span>
