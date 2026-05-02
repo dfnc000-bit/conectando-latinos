@@ -131,13 +131,12 @@ export default function PerfilPage() {
                   Verificado/a
                 </span>
                 <span className="bg-cl-bg border border-cl-gray-light text-cl-gray text-xs font-bold rounded-lg px-2.5 py-1">
-                  {proveedor.cat}
+                  {proveedor.cat.join(' · ')}
                 </span>
               </div>
               <h1 className="font-syne font-extrabold text-cl-dark text-xl md:text-2xl tracking-tight leading-tight">
                 {proveedor.nombreNegocio}
               </h1>
-              <p className="text-cl-gray text-sm mt-0.5">{proveedor.nombre}</p>
             </div>
           </div>
 
@@ -167,7 +166,7 @@ export default function PerfilPage() {
             </div>
             <div className="bg-cl-bg rounded-xl p-3 border border-cl-gray-light">
               <p className="text-cl-gray text-[0.65rem] font-bold uppercase tracking-wider mb-1">Categoría</p>
-              <p className="font-semibold text-sm text-cl-verde">{proveedor.cat}</p>
+              <p className="font-semibold text-sm text-cl-verde">{proveedor.cat.join(' · ')}</p>
             </div>
           </div>
 
@@ -176,7 +175,7 @@ export default function PerfilPage() {
           {/* CTA buttons */}
           <div className="flex gap-3 flex-wrap">
             <a
-              href={`https://wa.me/${proveedor.telefono}?text=Hola! Te vi en Conectando Latinos Melbourne y me interesa tu servicio de ${proveedor.cat}`}
+              href={`https://wa.me/${proveedor.telefono}?text=Hola! Te vi en Conectando Latinos Melbourne y me interesa tu servicio de ${proveedor.cat[0]}`}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => handleWhatsapp('perfil')}
@@ -322,7 +321,7 @@ export default function PerfilPage() {
         {/* Related */}
         {relacionados.length > 0 && (
           <div className="mt-8">
-            <h2 className="font-syne font-bold text-cl-dark text-lg mb-4">Otros proveedores de {proveedor.cat}</h2>
+            <h2 className="font-syne font-bold text-cl-dark text-lg mb-4">Otros proveedores de {proveedor.cat[0]}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {relacionados.map((r, i) => (
                 <ProviderCard key={r.id} proveedor={r} index={i} />
