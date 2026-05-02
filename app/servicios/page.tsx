@@ -47,7 +47,7 @@ function ServiciosContent() {
 
   const filtrados = useMemo(() => {
     return proveedores.filter((p) => {
-      const matchCat = catActiva === 'todas' || p.cat === catActiva
+      const matchCat = catActiva === 'todas' || p.cat.includes(catActiva)
       const matchQ = !query || [p.nombreNegocio, p.nombre, p.cat, p.descripcion]
         .join(' ').toLowerCase().includes(query.toLowerCase())
       const matchSub = !suburbio || p.suburb === suburbio
