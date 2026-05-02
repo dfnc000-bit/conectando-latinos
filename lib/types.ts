@@ -14,7 +14,7 @@ export type Proveedor = {
   id: string
   nombre: string
   nombreNegocio: string
-  cat: string
+  cat: string[]
   suburb: string
   disponible: boolean
   descripcion: string
