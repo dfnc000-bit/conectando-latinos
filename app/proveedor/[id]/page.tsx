@@ -307,7 +307,9 @@ export default function PerfilPage() {
                 <span className="text-cl-dark font-semibold">{proveedor.suburb}, Melbourne</span>
               </div>
               <a
-                href={`https://www.google.com/maps/search/${encodeURIComponent(proveedor.suburb + ' Melbourne')}`}
+               href={proveedor.lat && proveedor.lng 
+  ? `https://www.google.com/maps?q=${proveedor.lat},${proveedor.lng}`
+  : `https://www.google.com/maps/search/${encodeURIComponent((proveedor.direccion ?? proveedor.suburb) + ' Melbourne')}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-3 block text-center text-xs font-bold text-cl-verde hover:text-cl-verde2 border border-cl-verde/30 hover:border-cl-verde rounded-xl py-2 transition-all"
