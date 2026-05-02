@@ -7,7 +7,7 @@ import { SUBURBIOS } from '@/lib/types'
 
 const STATS = [
   { value: '80+', label: 'Proveedores activos' },
-  { value: '11', label: 'Categorías' },
+  { value: '12', label: 'Categorías' },
   { value: '10+', label: 'Suburbios' },
   { value: '4.9★', label: 'Calificación promedio' },
 ]
