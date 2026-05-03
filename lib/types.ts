@@ -66,7 +66,7 @@ export const SUBURBIOS = [
   'Melbourne CBD', 'Docklands', 'Southbank', 'Port Melbourne',
 
   // Zona Oeste (más comunidad latina)
-  'Footscray', 'Sunshine', 'St Albans', 'Werribee', 'Tarneit',
+  'Footscray', 'Maribyrnong', 'Sunshine', 'St Albans', 'Werribee', 'Tarneit',
   'Point Cook', 'Hoppers Crossing', 'Wyndham Vale', 'Laverton', 'Newport',
   'Altona', 'Williamstown', 'Melton', 'Caroline Springs',
   'Truganina', 'Manor Lakes', 'Deer Park',
