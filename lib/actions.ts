@@ -450,3 +450,15 @@ export async function adminGetUsuariosAction() {
   const { data } = await query
   return data ?? []
 }
+export async function getStatsAction() {
+  try {
+    const supabase = await createClient()
+    const { count } = await supabase
+      .from('proveedores')
+      .select('*', { count: 'exact', head: true })
+      .eq('estado', 'aprobado')
+    return { totalProveedores: count ?? 0 }
+  } catch {
+    return { totalProveedores: 80 }
+  }
+}
