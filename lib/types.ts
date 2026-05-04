@@ -59,6 +59,8 @@ export const CATEGORIAS = [
   { value: 'Microblading', label: 'Microblading', icon: '🖊️' },
   { value: 'Bienestar', label: 'Bienestar', icon: '🧘' },
   { value: 'Tatuajes', label: 'Tatuajes', icon: '🪡' },
+  { value: 'Autos', label: 'Autos', icon: '🚗' },
+  { value: 'Comida', label: 'Comida', icon: '🍽️' },
 ]
 
 export const SUBURBIOS = [
@@ -98,6 +100,8 @@ export const GRAD_CATS: Record<string, string> = {
   'Microblading': 'linear-gradient(135deg,#1a2a3a,#2a6a8a)',
   'Bienestar': 'linear-gradient(135deg,#2a1a3a,#6a2a8a)',
   'default': 'linear-gradient(135deg,#141814,#1a8a6e)',
+  'Autos': 'linear-gradient(135deg,#1a1a2a,#2a4a8a)',
+  'Comida': 'linear-gradient(135deg,#2a1a0a,#8a4a1a)',
 }
 
 export function gradForCat(cat: string): string {
