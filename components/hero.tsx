@@ -52,10 +52,11 @@ export function Hero() {
           className="font-syne text-white font-extrabold leading-[1.06] tracking-tight mb-5 text-balance"
           style={{ fontSize: 'clamp(2.2rem, 5vw, 3.8rem)' }}
         >
-          Servicios de belleza y bienestar<br />
-          <span className="text-cl-verde2">en español</span>
+          Apoyando a nuestra<br />
+          comunidad latina<br />
+          <span className="text-cl-verde2">con servicios</span>
           <br />
-          cerca de <span className="text-cl-gold2">ti</span>
+          de <span className="text-cl-gold2">confianza</span>
         </h1>
 
         {/* Subtítulo */}
