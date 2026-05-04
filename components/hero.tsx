@@ -4,18 +4,27 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Search, MapPin, Plus } from 'lucide-react'
 import { SUBURBIOS } from '@/lib/types'
+import { getStatsAction } from '@/lib/actions'
 
-const STATS = [
-  { value: '80+', label: 'Proveedores activos' },
+const BASE_STATS = [
   { value: '14', label: 'Categorías' },
   { value: '40+', label: 'Suburbios' },
   { value: '4.9★', label: 'Calificación promedio' },
 ]
-
 export function Hero() {
   const router = useRouter()
   const [query, setQuery] = useState('')
   const [suburb, setSuburb] = useState('')
+  const [totalProveedores, setTotalProveedores] = useState(80)
+
+useEffect(() => {
+  getStatsAction().then((s) => setTotalProveedores(s.totalProveedores))
+}, [])
+
+const STATS = [
+  { value: `${totalProveedores}+`, label: 'Proveedores activos' },
+  ...BASE_STATS,
+]
 
   function handleSearch() {
     const params = new URLSearchParams()
