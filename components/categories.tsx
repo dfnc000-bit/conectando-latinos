@@ -20,7 +20,7 @@ export function Categories({ active, onChange, linkMode = false }: CategoriesPro
           Categorías de servicios
         </h2>
         <p className="text-white/55 text-sm leading-relaxed max-w-md mx-auto mb-8">
-          Desde peluquería y barbería hasta masajes y microblading — todo en un solo lugar.
+          Desde peluquería y barbería hasta autos, comida y mucho más — todo en un solo lugar.
         </p>
         <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-12 gap-2.5">
           {CATEGORIAS.map((cat) => {
