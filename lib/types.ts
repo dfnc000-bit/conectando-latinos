@@ -61,6 +61,7 @@ export const CATEGORIAS = [
   { value: 'Tatuajes', label: 'Tatuajes', icon: '🪡' },
   { value: 'Autos', label: 'Autos', icon: '🚗' },
   { value: 'Comida', label: 'Comida', icon: '🍽️' },
+  { value: 'Tecnología', label: 'Tecnología', icon: '💻' },
 ]
 
 export const SUBURBIOS = [
