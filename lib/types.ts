@@ -62,6 +62,7 @@ export const CATEGORIAS = [
   { value: 'Autos', label: 'Autos', icon: '🚗' },
   { value: 'Comida', label: 'Comida', icon: '🍽️' },
   { value: 'Tecnología', label: 'Tecnología', icon: '💻' },
+  { value: 'Artesanías', label: 'Artesanías', icon: '🎨' },
 ]
 
 export const SUBURBIOS = [
@@ -100,6 +101,7 @@ export const GRAD_CATS: Record<string, string> = {
   'Depilación': 'linear-gradient(135deg,#2a3a1a,#6a8a2a)',
   'Microblading': 'linear-gradient(135deg,#1a2a3a,#2a6a8a)',
   'Bienestar': 'linear-gradient(135deg,#2a1a3a,#6a2a8a)',
+  'Artesanías': 'linear-gradient(135deg,#3a1a1a,#8a3a2a)',
   'Tecnología': 'linear-gradient(135deg,#1a1a3a,#2a2a8a)',
   'default': 'linear-gradient(135deg,#141814,#1a8a6e)',
   'Autos': 'linear-gradient(135deg,#1a1a2a,#2a4a8a)',
