@@ -7,7 +7,7 @@ import { SUBURBIOS } from '@/lib/types'
 import { getStatsAction } from '@/lib/actions'
 
 const BASE_STATS = [
-  { value: '15', label: 'Categorías' },
+  { value: '16', label: 'Categorías' },
   { value: '40+', label: 'Suburbios' },
   { value: '4.9★', label: 'Calificación promedio' },
 ]
