@@ -67,7 +67,7 @@ export const CATEGORIAS = [
 
 export const SUBURBIOS = [
   // Zona Central
-  'Melbourne CBD', 'Docklands', 'Southbank', 'Port Melbourne', 'Richmond',
+  'Melbourne CBD', 'Docklands', 'Southbank', 'Port Melbourne',  'Richmond',
 
   // Zona Oeste (más comunidad latina)
   'Footscray', 'Maribyrnong', 'Sunshine', 'St Albans', 'Werribee', 'Tarneit',
