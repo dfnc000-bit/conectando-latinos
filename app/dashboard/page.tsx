@@ -7,6 +7,7 @@ import { Footer } from '@/components/footer'
 import { createClient } from '@/lib/supabase/client'
 import { getProveedorByUserAction, updateProveedorAction, updateServiciosAction } from '@/lib/actions'
 import { CATEGORIAS, SUBURBIOS } from '@/lib/types'
+import { uploadProviderImage } from '@/lib/uploadImage'
 import { CheckCircle, Edit3, Save, X, Plus, Trash2, Eye, MessageCircle, ToggleLeft, ToggleRight } from 'lucide-react'
 
 export default function DashboardPage() {
@@ -25,6 +26,8 @@ export default function DashboardPage() {
   const [instagram, setInstagram] = useState('')
   const [disponible, setDisponible] = useState(true)
   const [servicios, setServicios] = useState<{ name: string; price: string }[]>([])
+  const [galeria, setGaleria] = useState<string[]>([])
+  const [subiendoFoto, setSubiendoFoto] = useState(false)
 
   useEffect(() => {
     const supabase = createClient()
@@ -45,6 +48,7 @@ export default function DashboardPage() {
         setSuburb(p.suburb ?? '')
         setInstagram(p.instagram ?? '')
         setDisponible(p.disponible ?? true)
+        setGaleria(p.galeria ?? []) 
         setServicios((p.servicios ?? []).map((s: any) => ({ name: s.nombre, price: s.precio })))
         setLoading(false)
       })
@@ -76,6 +80,28 @@ export default function DashboardPage() {
     const nuevo = [...servicios]
     nuevo[i][field] = value
     setServicios(nuevo)
+  }
+  async function subirFoto(e: React.ChangeEvent<HTMLInputElement>) {
+    if (!e.target.files?.[0] || !proveedor) return
+    setSubiendoFoto(true)
+    try {
+      const slot = galeria.length
+      const url = await uploadProviderImage(e.target.files[0], proveedor.user_id, slot)
+      const nuevaGaleria = [...galeria, url]
+      setGaleria(nuevaGaleria)
+      await updateProveedorAction(proveedor.id, { galeria: nuevaGaleria })
+      setMensaje('¡Foto agregada!')
+      setTimeout(() => setMensaje(''), 3000)
+    } catch {
+      setMensaje('Error al subir la foto')
+    }
+    setSubiendoFoto(false)
+  }
+
+  async function eliminarFoto(i: number) {
+    const nuevaGaleria = galeria.filter((_, idx) => idx !== i)
+    setGaleria(nuevaGaleria)
+    await updateProveedorAction(proveedor.id, { galeria: nuevaGaleria })
   }
 
   if (loading) {
@@ -224,6 +250,33 @@ export default function DashboardPage() {
               )}
             </div>
           ))}
+        </div>
+        {/* Galería */}
+        <div className="bg-white rounded-2xl border border-cl-gray-light p-5 flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <h2 className="font-syne font-bold text-cl-dark text-base">Galería de trabajos</h2>
+            <label className={`flex items-center gap-1.5 text-cl-verde text-xs font-bold cursor-pointer hover:text-cl-verde2 transition-colors ${subiendoFoto ? 'opacity-50 pointer-events-none' : ''}`}>
+              <Plus size={14} />
+              {subiendoFoto ? 'Subiendo...' : 'Agregar foto'}
+              <input type="file" accept="image/*" className="hidden" onChange={subirFoto} disabled={subiendoFoto} />
+            </label>
+          </div>
+          {galeria.length === 0 && (
+            <p className="text-cl-gray text-sm">No hay fotos en la galería aún.</p>
+          )}
+          <div className="grid grid-cols-3 gap-2">
+            {galeria.map((img, i) => (
+              <div key={i} className="relative aspect-square rounded-xl overflow-hidden group">
+                <img src={img} alt={`Foto ${i + 1}`} className="w-full h-full object-cover" />
+                <button
+                  onClick={() => eliminarFoto(i)}
+                  className="absolute top-1.5 right-1.5 bg-red-500 text-white w-6 h-6 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <X size={12} />
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Ver perfil público */}
