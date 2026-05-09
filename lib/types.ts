@@ -63,6 +63,7 @@ export const CATEGORIAS = [
   { value: 'Comida', label: 'Comida', icon: '🍽️' },
   { value: 'Tecnología', label: 'Tecnología', icon: '💻' },
   { value: 'Artesanías', label: 'Artesanías', icon: '🎨' },
+  { value: 'Piercings', label: 'Piercings', icon: '💎' },
 ]
 
 export const SUBURBIOS = [
@@ -103,6 +104,7 @@ export const GRAD_CATS: Record<string, string> = {
   'Bienestar': 'linear-gradient(135deg,#2a1a3a,#6a2a8a)',
   'Artesanías': 'linear-gradient(135deg,#3a1a1a,#8a3a2a)',
   'Tecnología': 'linear-gradient(135deg,#1a1a3a,#2a2a8a)',
+  'Piercings': 'linear-gradient(135deg,#1a1a2a,#6a2a8a)',
   'default': 'linear-gradient(135deg,#141814,#1a8a6e)',
   'Autos': 'linear-gradient(135deg,#1a1a2a,#2a4a8a)',
   'Comida': 'linear-gradient(135deg,#2a1a0a,#8a4a1a)',
