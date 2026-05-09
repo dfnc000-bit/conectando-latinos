@@ -103,6 +103,20 @@ export default function DashboardPage() {
     setGaleria(nuevaGaleria)
     await updateProveedorAction(proveedor.id, { galeria: nuevaGaleria })
   }
+  async function subirFotoPerfil(e: React.ChangeEvent<HTMLInputElement>) {
+    if (!e.target.files?.[0] || !proveedor) return
+    setSubiendoFoto(true)
+    try {
+      const url = await uploadProviderImage(e.target.files[0], proveedor.user_id, 99)
+      await updateProveedorAction(proveedor.id, { avatar_url: url })
+      setProveedor({ ...proveedor, avatar_url: url })
+      setMensaje('¡Foto de perfil actualizada!')
+      setTimeout(() => setMensaje(''), 3000)
+    } catch {
+      setMensaje('Error al subir la foto')
+    }
+    setSubiendoFoto(false)
+  }
 
   if (loading) {
     return (
@@ -167,6 +181,19 @@ export default function DashboardPage() {
         {/* Info básica */}
         <div className="bg-white rounded-2xl border border-cl-gray-light p-5 flex flex-col gap-4">
           <h2 className="font-syne font-bold text-cl-dark text-base">Información básica</h2>
+          {/* Foto de perfil */}
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 rounded-2xl overflow-hidden bg-cl-bg2 flex-shrink-0">
+              {proveedor.avatar_url
+                ? <img src={proveedor.avatar_url} className="w-full h-full object-cover" />
+                : <span className="w-full h-full flex items-center justify-center text-2xl">👤</span>
+              }
+            </div>
+            <label className="flex items-center gap-1.5 text-cl-verde text-xs font-bold cursor-pointer hover:text-cl-verde2 transition-colors">
+              <Plus size={14} /> Cambiar foto de perfil
+              <input type="file" accept="image/*" className="hidden" onChange={subirFotoPerfil} />
+            </label>
+          </div>
 
           <div className="flex flex-col gap-1">
             <label className="text-xs font-bold text-cl-gray uppercase tracking-wider">Nombre / Negocio</label>
