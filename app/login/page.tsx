@@ -1,5 +1,4 @@
 'use client'
-
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -8,6 +7,7 @@ import { Footer } from '@/components/footer'
 import { loginAction } from '@/lib/actions'
 import { setSesion } from '@/lib/store'
 import { type Usuario } from '@/lib/types'
+import { createClient } from '@/lib/supabase/client'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -15,21 +15,18 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [resetSent, setResetSent] = useState(false)
 
   async function handleLogin() {
     if (!email || !password) { setError('Completá todos los campos.'); return }
     setLoading(true)
     setError('')
-
     const result = await loginAction(email, password)
-
     if (result.error) {
       setError('Correo o contraseña incorrectos.')
       setLoading(false)
       return
     }
-
-    // Guardar sesion local para la UI
     const sesion: Usuario = {
       id: result.tipo === 'admin' ? 'admin' : `u_${Date.now()}`,
       nombre: result.tipo === 'admin' ? 'Administrador' : email.split('@')[0],
@@ -42,10 +39,22 @@ export default function LoginPage() {
       ? { ...sesion, proveedorId: (result as any).proveedorId } as any
       : sesion
     )
-
     if (result.tipo === 'admin') router.push('/admin')
     else if (result.tipo === 'proveedor') router.push('/dashboard')
     else router.push('/')
+  }
+
+  async function handleReset() {
+    if (!email) { setError('Ingresá tu correo primero'); return }
+    setLoading(true)
+    setError('')
+    const supabase = createClient()
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: 'https://www.conectandolatinos.com/auth/reset-password',
+    })
+    setLoading(false)
+    if (error) { setError('Error al enviar el email. Intentá de nuevo.'); return }
+    setResetSent(true)
   }
 
   return (
@@ -68,10 +77,26 @@ export default function LoginPage() {
                 <label className="block text-cl-gray text-[0.7rem] font-bold uppercase tracking-wider mb-1.5">Contraseña</label>
                 <input className="form-input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleLogin()} placeholder="Tu contraseña" />
               </div>
-              
+
               <button onClick={handleLogin} disabled={loading} className="w-full bg-cl-verde hover:bg-cl-verde2 text-white font-bold text-sm rounded-xl py-3.5 transition-colors disabled:opacity-60">
                 {loading ? 'Entrando...' : 'Iniciar sesión'}
               </button>
+
+              {!resetSent ? (
+                <button
+                  type="button"
+                  onClick={handleReset}
+                  disabled={loading}
+                  className="text-center text-cl-verde text-xs hover:underline disabled:opacity-60"
+                >
+                  ¿Olvidaste tu contraseña?
+                </button>
+              ) : (
+                <p className="text-center text-green-600 text-xs font-semibold">
+                  ✓ Te enviamos un email para restablecer tu contraseña
+                </p>
+              )}
+
               <p className="text-center text-cl-gray text-xs">
                 ¿No tenés cuenta?{' '}
                 <Link href="/registro" className="text-cl-verde font-bold hover:underline">Registrarte gratis</Link>
