@@ -4,76 +4,6 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import type { Proveedor, Usuario } from '@/lib/types'
 
-// Datos semilla locales — se usan cuando Supabase no esta disponible en preview
-const SEED_PROVEEDORES = [
-  {
-    id: 'p1', nombre: 'Ana Castillo', email: 'ana@ejemplo.com', telefono: '61412345678',
-    instagram: 'anacastillo', cat: 'Peluquería', suburb: 'Footscray',
-    direccion: '85 Barkly St, Footscray VIC 3011',
-    lat: -37.8001, lng: 144.8997,
-    descripcion: 'Especialista en cortes y coloración para todo tipo de cabello. Más de 8 años de experiencia en Melbourne.',
-    horario: 'Lun–Sáb 9am–7pm', estado: 'aprobado', disponible: true, destacado: true,
-    rating: 4.9, total_resenas: 47, avatar_url: '', galeria: [],
-    fecha_registro: '2024-01-15',
-    servicios: [{ nombre: 'Corte y peinado', precio: '$65' }, { nombre: 'Coloración completa', precio: '$120' }, { nombre: 'Tratamiento keratina', precio: '$180' }],
-  },
-  {
-    id: 'p2', nombre: 'Carlos Medina', email: 'carlos@ejemplo.com', telefono: '61423456789',
-    instagram: 'carlosbarberia', cat: 'Barbería', suburb: 'Sunshine',
-    direccion: '12 Hampshire Rd, Sunshine VIC 3020',
-    lat: -37.7891, lng: 144.8302,
-    descripcion: 'Barbero profesional especializado en cortes modernos, degradados y diseños de barba.',
-    horario: 'Mar–Dom 10am–8pm', estado: 'aprobado', disponible: true, destacado: true,
-    rating: 4.8, total_resenas: 62, avatar_url: '', galeria: [],
-    fecha_registro: '2024-02-10',
-    servicios: [{ nombre: 'Corte clásico', precio: '$35' }, { nombre: 'Corte + barba', precio: '$55' }, { nombre: 'Diseño de barba', precio: '$25' }],
-  },
-  {
-    id: 'p3', nombre: 'María Fernández', email: 'maria@ejemplo.com', telefono: '61434567890',
-    instagram: 'mariaunas', cat: 'Uñas', suburb: 'Dandenong',
-    direccion: '45 Walker St, Dandenong VIC 3175',
-    lat: -37.9875, lng: 145.2151,
-    descripcion: 'Nail artist certificada. Especialista en gel, acrílico, nail art y diseños personalizados.',
-    horario: 'Lun–Sáb 10am–6pm', estado: 'aprobado', disponible: true, destacado: true,
-    rating: 5.0, total_resenas: 38, avatar_url: '', galeria: [],
-    fecha_registro: '2024-03-05',
-    servicios: [{ nombre: 'Gel completo', precio: '$70' }, { nombre: 'Acrílico', precio: '$85' }, { nombre: 'Nail art', precio: '$95' }],
-  },
-  {
-    id: 'p4', nombre: 'Sofía López', email: 'sofia@ejemplo.com', telefono: '61445678901',
-    instagram: 'sofiamasajes', cat: 'Masajes', suburb: 'Melbourne CBD',
-    direccion: '200 Bourke St, Melbourne VIC 3000',
-    lat: -37.8136, lng: 144.9631,
-    descripcion: 'Terapeuta certificada en masajes relajantes, deportivos y descontracturantes.',
-    horario: 'Lun–Vie 9am–7pm', estado: 'aprobado', disponible: true, destacado: false,
-    rating: 4.7, total_resenas: 29, avatar_url: '', galeria: [],
-    fecha_registro: '2024-03-20',
-    servicios: [{ nombre: 'Masaje relajante 60min', precio: '$90' }, { nombre: 'Masaje deportivo 90min', precio: '$130' }],
-  },
-  {
-    id: 'p5', nombre: 'Valentina Ruiz', email: 'valentina@ejemplo.com', telefono: '61456789012',
-    instagram: 'valmakeup', cat: 'Maquillaje', suburb: 'St Albans',
-    direccion: '33 Main Rd E, St Albans VIC 3021',
-    lat: -37.7468, lng: 144.8054,
-    descripcion: 'Maquilladora profesional para novias, eventos, quinceañeras y sesiones de fotos.',
-    horario: 'Mié–Dom 10am–8pm', estado: 'aprobado', disponible: true, destacado: false,
-    rating: 4.9, total_resenas: 54, avatar_url: '', galeria: [],
-    fecha_registro: '2024-04-01',
-    servicios: [{ nombre: 'Maquillaje social', precio: '$80' }, { nombre: 'Maquillaje novia', precio: '$180' }, { nombre: 'Prueba de maquillaje', precio: '$60' }],
-  },
-  {
-    id: 'p6', nombre: 'Diego Torres', email: 'diego@ejemplo.com', telefono: '61467890123',
-    instagram: 'diegofaciales', cat: 'Faciales', suburb: 'Werribee',
-    direccion: '15 Comben Dr, Werribee VIC 3030',
-    lat: -37.9026, lng: 144.6630,
-    descripcion: 'Esteticista certificado especializado en tratamientos faciales, limpieza profunda e hidratación.',
-    horario: 'Mar–Sáb 10am–6pm', estado: 'aprobado', disponible: true, destacado: false,
-    rating: 4.6, total_resenas: 21, avatar_url: '', galeria: [],
-    fecha_registro: '2024-04-15',
-    servicios: [{ nombre: 'Limpieza facial', precio: '$75' }, { nombre: 'Hidratación profunda', precio: '$95' }, { nombre: 'Peeling', precio: '$110' }],
-  },
-]
-
 // ── TRACKING WHATSAPP ────────────────────────────────────────────────────────
 
 export async function registrarClickWhatsappAction(proveedorId: string, fuente: string = 'perfil') {
@@ -172,7 +102,7 @@ export async function registrarClienteAction(data: {
   email: string
   password: string
   suburb: string
-  aceptaPublicidad: boolean   // ← NUEVO
+  aceptaPublicidad: boolean
 }) {
   const supabase = await createClient()
   const { error } = await supabase.auth.signUp({
@@ -186,7 +116,7 @@ export async function registrarClienteAction(data: {
         nombre: data.nombre,
         tipo: 'cliente',
         suburb: data.suburb,
-        acepta_publicidad: data.aceptaPublicidad,   // ← NUEVO — se guarda en user_metadata
+        acepta_publicidad: data.aceptaPublicidad,
       },
     },
   })
@@ -211,11 +141,10 @@ export async function registrarProveedorAction(formData: {
   fotoPerfil: string
   galeria: string[]
   servicios: { name: string; price: string }[]
-  aceptaPublicidad: boolean   // ← NUEVO
+  aceptaPublicidad: boolean
 }) {
   const supabase = await createClient()
 
-  // 1. Crear usuario en Auth
   const { data: authData, error: authError } = await supabase.auth.signUp({
     email: formData.email,
     password: formData.password,
@@ -227,7 +156,7 @@ export async function registrarProveedorAction(formData: {
         nombre: formData.nombre,
         tipo: 'proveedor',
         suburb: formData.suburb,
-        acepta_publicidad: formData.aceptaPublicidad,   // ← NUEVO — se guarda en user_metadata
+        acepta_publicidad: formData.aceptaPublicidad,
       },
     },
   })
@@ -235,7 +164,6 @@ export async function registrarProveedorAction(formData: {
   if (authError) return { error: authError.message, proveedorId: null }
   if (!authData.user) return { error: 'No se pudo crear el usuario.', proveedorId: null }
 
-  // 2. Crear proveedor en la tabla
   const provId = `p_${Date.now()}`
   const { error: provError } = await supabase.from('proveedores').insert({
     id: provId,
@@ -254,12 +182,11 @@ export async function registrarProveedorAction(formData: {
     destacado: false,
     avatar_url: formData.fotoPerfil,
     galeria: formData.galeria,
-    acepta_publicidad: formData.aceptaPublicidad,   // ← NUEVO — también se guarda en la tabla proveedores
+    acepta_publicidad: formData.aceptaPublicidad,
   })
 
   if (provError) return { error: provError.message, proveedorId: null }
 
-  // 3. Insertar servicios
   if (formData.servicios.length > 0) {
     const servRows = formData.servicios
       .filter((s) => s.name.trim())
@@ -298,16 +225,7 @@ export async function getProveedoresAction(filtros?: {
   }
 
   const { data, error } = await query.order('destacado', { ascending: false }).order('rating', { ascending: false })
-  if (error || !data || data.length === 0) {
-    let resultado = SEED_PROVEEDORES as any[]
-    if (filtros?.cat && filtros.cat !== 'todas') resultado = resultado.filter((p) => p.cat === filtros!.cat)
-    if (filtros?.suburb) resultado = resultado.filter((p) => p.suburb === filtros!.suburb)
-    if (filtros?.busqueda) {
-      const q = filtros.busqueda.toLowerCase()
-      resultado = resultado.filter((p) => `${p.nombre} ${p.cat} ${p.descripcion}`.toLowerCase().includes(q))
-    }
-    return resultado
-  }
+  if (error) return []
   return data ?? []
 }
 
@@ -318,9 +236,7 @@ export async function getProveedorByIdAction(id: string) {
     .select('*, servicios(*), resenas(*)')
     .eq('id', id)
     .single()
-  if (!data) {
-    return SEED_PROVEEDORES.find((p) => p.id === id) ?? null
-  }
+  if (!data) return null
   return data
 }
 
@@ -377,7 +293,6 @@ export async function agregarResenaAction(data: {
   })
   if (error) return { error: error.message }
 
-  // Actualizar rating promedio
   const { data: resenas } = await supabase
     .from('resenas')
     .select('rating')
@@ -450,6 +365,7 @@ export async function adminGetUsuariosAction() {
   const { data } = await query
   return data ?? []
 }
+
 export async function getStatsAction() {
   try {
     const supabase = await createClient()
@@ -459,6 +375,6 @@ export async function getStatsAction() {
       .eq('estado', 'aprobado')
     return { totalProveedores: count ?? 0 }
   } catch {
-    return { totalProveedores: 80 }
+    return { totalProveedores: 0 }
   }
 }
