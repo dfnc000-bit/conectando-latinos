@@ -1,8 +1,6 @@
 import Link from 'next/link'
-
 export function Footer() {
-  const categorias = ['Peluquería', 'Barbería', 'Uñas', 'Masajes', 'Maquillaje']
-
+  const categorias = ['Peluquería', 'Barbería', 'Uñas', 'Masajes', 'Maquillaje', 'Autos', 'Comida', 'Tecnología', 'Artesanías', 'Piercings']
   return (
     <footer className="bg-cl-dark px-6 pt-14 pb-7">
       <div className="max-w-4xl mx-auto">
@@ -21,7 +19,6 @@ export function Footer() {
               La plataforma que conecta a la comunidad latina en Melbourne con servicios de belleza y bienestar — en español, cerca tuyo.
             </p>
           </div>
-
           {/* Explorar */}
           <div>
             <h4 className="text-white/80 font-bold text-sm mb-4">Explorar</h4>
@@ -40,7 +37,6 @@ export function Footer() {
               </Link>
             </div>
           </div>
-
           {/* Para proveedores */}
           <div>
             <h4 className="text-white/80 font-bold text-sm mb-4">Para proveedores</h4>
@@ -60,10 +56,9 @@ export function Footer() {
             </div>
           </div>
         </div>
-
         <div className="border-t border-white/[0.08] pt-5 text-center">
           <p className="text-white/30 text-xs">
-            © 2025 Conectando Latinos Melbourne · Hecho con amor para la comunidad latina en Australia
+            © 2026 Conectando Latinos Melbourne · Hecho con amor para la comunidad latina en Australia
           </p>
         </div>
       </div>
