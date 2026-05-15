@@ -144,7 +144,17 @@ export default function PerfilPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
             <div className="bg-cl-bg rounded-xl p-3 border border-cl-gray-light">
               <p className="text-cl-gray text-[0.65rem] font-bold uppercase tracking-wider mb-1">Calificación</p>
-              250391
+             <div className="flex items-center gap-1">
+  {proveedor.totalResenas > 0 ? (
+    <>
+      <Star size={13} className="fill-amber-400 text-amber-400" />
+      <span className="font-bold text-sm text-cl-dark">{proveedor.rating.toFixed(1)}</span>
+      <span className="text-cl-gray text-xs">· {proveedor.totalResenas}</span>
+    </>
+  ) : (
+    <span className="text-cl-gray text-xs">Sin reseñas aún</span>
+  )}
+</div>
             </div>
             <div className="bg-cl-bg rounded-xl p-3 border border-cl-gray-light">
               <p className="text-cl-gray text-[0.65rem] font-bold uppercase tracking-wider mb-1">Suburbio</p>
