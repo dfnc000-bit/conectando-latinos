@@ -73,7 +73,7 @@ export const SUBURBIOS = [
   // Zona Oeste (más comunidad latina)
   'Footscray', 'Maribyrnong', 'Sunshine', 'St Albans', 'Werribee', 'Tarneit',
   'Point Cook', 'Hoppers Crossing', 'Wyndham Vale', 'Laverton', 'Newport',
-  'Altona', 'Williamstown', 'Melton', 'Caroline Springs',
+  'Altona', 'Williamstown', 'Melton', 'Caroline Springs', 'Rockbank',
   'Truganina', 'Manor Lakes', 'Deer Park',
 
   // Zona Norte
