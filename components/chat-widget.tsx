@@ -1,7 +1,7 @@
 'use client'
 import { MessageCircle } from 'lucide-react'
 
-const WHATSAPP_NUMBER = '61405851139'
+const WHATSAPP_NUMBER = '61426095711'
 const WHATSAPP_MESSAGE = '¡Hola! Te contacto desde Conectando Latinos Melbourne. Necesito ayuda con...'
 
 export function ChatWidget() {
