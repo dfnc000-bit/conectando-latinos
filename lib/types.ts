@@ -83,7 +83,7 @@ export const SUBURBIOS = [
 
   // Zona Este
   'Box Hill', 'Springvale', 'Noble Park', 'Oakleigh',
-  'Clayton', 'Mulgrave', 'Rowville', 'Glen Waverley',
+  'Clayton', 'Mulgrave', 'Rowville', 'Glen Waverley', 'Malvern East',
 
   // Zona Sur
   'Dandenong', 'Cranbourne', 'Frankston', 'Cheltenham',
