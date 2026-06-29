@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Syne, Plus_Jakarta_Sans } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/react'
 import './globals.css'
 
 const syne = Syne({ subsets: ['latin'], variable: '--font-syne', weight: ['600','700','800'] })
@@ -19,6 +20,7 @@ export default function RootLayout({
     <html lang="es" className={`${syne.variable} ${plusJakarta.variable} bg-[#0f1410]`}>
       <body className="font-jakarta antialiased bg-[#0f1410] text-[#e8ebe6]">
         {children}
+        <Analytics />
       </body>
     </html>
   )
